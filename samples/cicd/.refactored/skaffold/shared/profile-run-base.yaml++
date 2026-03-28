@@ -1,0 +1,3 @@
+name: run
+activation:
+  - command: run

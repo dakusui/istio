@@ -13,9 +13,8 @@ profiles:
             chartPath: ../../../manifests/charts/base
             namespace: istio-system
             createNamespace: true
-  - name: run
-    activation:
-      - command: run
+  - $extends:
+      - shared/profile-run-base.yaml++
     deploy:
       helm:
         releases:
@@ -42,9 +41,8 @@ profiles:
           - name: istiod
             chartPath: ../../../manifests/charts/istio-control/istio-discovery
             namespace: istio-system
-  - name: run
-    activation:
-      - command: run
+  - $extends:
+      - shared/profile-run-base.yaml++
     deploy:
       helm:
         releases:
@@ -70,9 +68,8 @@ profiles:
           - name: istio-ingressgateway
             chartPath: ../../../manifests/charts/gateway
             namespace: istio-system
-  - name: run
-    activation:
-      - command: run
+  - $extends:
+      - shared/profile-run-base.yaml++
     deploy:
       helm:
         releases:
