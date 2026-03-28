@@ -242,23 +242,45 @@ metadata:
 
 **Comments:** YAML comments are stripped during jq++ → yq round-trip. If the original has significant comments, note this in the report.
 
-### 4. Generate output with yjoin
+### 4. Create generate.sh and generate output
 
-No hand-written `generate.sh` is needed. Run `yjoin` from `.refactored/` to produce `.generated/`:
+Create `samples/{sample-name}/.refactored/generate.sh` using this template:
 
 ```bash
+#!/usr/bin/env bash
+# Usage:
+#   generate.sh [OUT_DIR]
+#
+# Assembles .refactored/ sources into OUT_DIR (default: ../.generated).
+# _-prefixed keys (private jq++ variables) are stripped from all output files.
+#
+# To compare a local edit against the current .generated/:
+#   generate.sh /tmp/{sample-name}-preview
+#   diff -r /tmp/{sample-name}-preview ../.generated/
+
+set -euo pipefail
 SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
-"${SKILL_BIN}/yjoin" \
-  --out-dir "samples/{sample-name}/.generated" \
-  "samples/{sample-name}/.refactored"
+SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+OUT_DIR="${1:-${SAMPLE_DIR}/.generated}"
+
+# ── assemble ──────────────────────────────────────────────────────────────────
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactored"
+# Add one line per subdirectory, e.g.:
+# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api" "${SAMPLE_DIR}/.refactored/gateway-api"
+
+# ── strip private _-prefixed keys ─────────────────────────────────────────────
+while IFS= read -r f; do
+  tmp="$(mktemp)"
+  "${SKILL_BIN}/ystrip" "${f}" > "${tmp}"
+  mv "${tmp}" "${f}"
+done < <(find "${OUT_DIR}" -name "*.yaml" | sort)
 ```
 
-For samples with subdirectories (e.g. `gateway-api/`, `platform/kube/`), run `yjoin` once per subdirectory with the appropriate `--out-dir`:
+Adjust the `yjoin` lines to match the sample's subdirectory structure. Make it executable and run it:
 
 ```bash
-"${SKILL_BIN}/yjoin" \
-  --out-dir "samples/{sample-name}/.generated/gateway-api" \
-  "samples/{sample-name}/.refactored/gateway-api"
+chmod +x samples/{sample-name}/.refactored/generate.sh
+samples/{sample-name}/.refactored/generate.sh
 ```
 
 JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only:
@@ -267,16 +289,15 @@ jq++ "samples/{sample-name}/.refactored/config.json++" | jq . \
   > "samples/{sample-name}/.generated/config.json"
 ```
 
-### 5. Run and verify
-
+The `OUT_DIR` argument lets you generate to a temporary location and compare:
 ```bash
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
-"${SKILL_BIN}/yjoin" \
-  --out-dir "samples/{sample-name}/.generated" \
-  "samples/{sample-name}/.refactored"
+samples/{sample-name}/.refactored/generate.sh /tmp/{sample-name}-preview
+diff -r /tmp/{sample-name}-preview samples/{sample-name}/.generated/
 ```
 
-Verify semantic equivalence (YAML formatting differences are not errors):
+### 5. Run and verify
+
+Run `generate.sh` to populate `.generated/`, then verify semantic equivalence (YAML formatting differences are not errors):
 
 ```bash
 # For each YAML file pair (kislyuk/yq: use -S flag to sort keys via jq):
