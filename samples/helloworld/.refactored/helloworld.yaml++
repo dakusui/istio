@@ -1,0 +1,8 @@
+$extends:
+  - shared/service-base.yaml++
+---
+$extends:
+  - shared/deployment-v1.yaml++
+---
+$extends:
+  - shared/deployment-v2.yaml++

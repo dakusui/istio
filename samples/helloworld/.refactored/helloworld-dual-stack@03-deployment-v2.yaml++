@@ -1,2 +1,0 @@
-$extends:
-  - shared/deployment-v2.yaml++
