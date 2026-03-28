@@ -1,6 +1,6 @@
 ---
 name: refactor-sample
-description: Refactor a sample under the samples/ directory using jq++ and yq to eliminate repetition, producing a DRY, maintainable version. Use this skill whenever the user asks to refactor, DRY up, or reduce duplication in a sample, mentions jq++ or YAML/JSON templating for a sample, or wants to create a generate.sh for a sample. Trigger on phrases like "refactor samples/X", "refactor the X sample", "DRY up this sample", "create a jq++ version of", "reduce duplication in samples", or "generate.sh for a sample".
+description: Refactor a sample under the samples/ directory using jq++ and yq to eliminate repetition, producing a DRY, maintainable version. Use this skill whenever the user asks to refactor, DRY up, or reduce duplication in a sample, mentions jq++ or YAML/JSON templating for a sample, or wants to create a generate.sh for a sample. Trigger on phrases like "refactor samples/X", "refactor the X sample", "DRY up this sample", "create a jq++ version of", "reduce duplication in samples", or "generate.sh for a sample". Do NOT produce a REFACTORING_REPORT.md unless the user explicitly asks for a report (in which case use refactor-and-report-sample instead).
 ---
 
 # Refactor Sample Skill
@@ -452,6 +452,3 @@ Once all diffs pass, promote `.sandbox/` to `.generated/`:
 samples/{sample-name}/.refactored/generate.sh samples/{sample-name}/.generated
 ```
 
-### 6. Produce the report
-
-Use the `/refactoring-report` skill to write `REFACTORING_REPORT.md`.
