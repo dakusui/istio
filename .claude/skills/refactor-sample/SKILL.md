@@ -25,6 +25,17 @@ If any are missing, stop and tell the user.
 
 Three scripts are provided under `.claude/skills/refactor-sample/bin/` and should be invoked with their full path (or add the directory to PATH):
 
+### `yq++ FILE`
+
+Elaborates a single `.yaml[++]` file to stdout. Internally splits the file on `---` boundaries, processes each document through `jq++` (for `.yaml++`) or `yq` (for `.yaml`), and concatenates the results. Relative `$extends` paths resolve correctly because the input file's directory is mirrored into the temp workspace via symlinks.
+
+```bash
+"${SKILL_BIN}/yq++" samples/foo/.refactored/foo.yaml++
+"${SKILL_BIN}/yq++" samples/foo/.refactored/foo.yaml++ > /tmp/foo-elaborated.yaml
+```
+
+Useful for quickly inspecting what a `.yaml++` file produces without running the full `yjoin` pipeline.
+
 ### `ystrip [FILE ...]`
 
 Removes all object keys beginning with `_` from YAML input, recursively at any depth. Reads from stdin when no files are given; handles multi-document YAML.
