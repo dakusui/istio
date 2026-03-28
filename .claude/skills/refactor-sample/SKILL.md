@@ -265,9 +265,11 @@ Create `samples/{sample-name}/.refactored/generate.sh` using this template:
 #   generate.sh ../.generated         # promote to .generated when satisfied
 
 set -euo pipefail
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
+export JF_PATH="${SAMPLE_DIR}/shared:${REPO_ROOT}/samples/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactored"
