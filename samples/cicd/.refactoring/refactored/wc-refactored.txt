@@ -1,0 +1,5 @@
+ 137  232 samples/cicd/.refactored/skaffold/skaffold.yaml++
+   3    6 samples/cicd/.refactored/shared/profile-run-base.yaml++
+   2    4 samples/cicd/.refactored/shared/config-base.yaml++
+   3    6 samples/cicd/.refactored/shared/profiles-dev-base.yaml++
+ 145  248 total

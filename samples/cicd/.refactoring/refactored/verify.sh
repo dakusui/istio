@@ -3,7 +3,7 @@
 #   verify.sh [DIR_A [DIR_B]]
 #
 # Checks semantic equivalence between DIR_A and DIR_B.
-# Defaults: DIR_A=../.generated  DIR_B=../.sandbox
+# Defaults: DIR_A=.refactoring/generated  DIR_B=.refactoring/sandbox
 #
 # YAML files are compared via: yq -S '.'  (key-sorted, null-filtered)
 # JSON files are compared via: jq -S .
@@ -11,9 +11,9 @@
 # Exits 0 if all files match, non-zero if any differ.
 
 set -euo pipefail
-SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-DIR_A="${1:-${SAMPLE_DIR}/.generated}"
-DIR_B="${2:-${SAMPLE_DIR}/.sandbox}"
+SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+DIR_A="${1:-${SAMPLE_DIR}/.refactoring/generated}"
+DIR_B="${2:-${SAMPLE_DIR}/.refactoring/sandbox}"
 
 pass=0
 fail=0

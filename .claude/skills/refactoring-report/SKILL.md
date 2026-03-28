@@ -10,8 +10,8 @@ Write `samples/{sample-name}/.refactored/REFACTORING_REPORT.md` summarizing the 
 ## What you need before writing
 
 - The sample name (e.g. `helloworld`, `cicd`)
-- `.generated/` populated (run `generate.sh` if not yet done)
-- `.refactored/` populated with `.yaml++` / `.json++` sources
+- `.refactoring/generated/` populated (run `generate.sh` if not yet done)
+- `.refactoring/refactored/` populated with `.yaml++` / `.json++` sources
 
 ## Metrics
 
@@ -19,13 +19,13 @@ Collect line and word counts with `wc -lw`, then fill in the table:
 
 ```bash
 # Generated baseline
-find samples/{sample-name}/.generated -name "*.yaml" -o -name "*.json" | sort | xargs wc -lw
+find samples/{sample-name}/.refactoring/generated -name "*.yaml" -o -name "*.json" | sort | xargs wc -lw
 
 # Refactored sources (exclude generate.sh and verify.sh)
-find samples/{sample-name}/.refactored -name "*.yaml++" -o -name "*.json++" | sort | xargs wc -lw
+find samples/{sample-name}/.refactoring/refactored -name "*.yaml++" -o -name "*.json++" | sort | xargs wc -lw
 
 # Shared subset only
-find samples/{sample-name}/.refactored/shared -name "*.yaml++" -o -name "*.json++" 2>/dev/null | sort | xargs wc -lw
+find samples/{sample-name}/.refactoring/refactored/shared -name "*.yaml++" -o -name "*.json++" 2>/dev/null | sort | xargs wc -lw
 ```
 
 Use `.generated/` as the baseline — not the originals. The originals may contain comments that are stripped during the jq++ → yq round-trip, which would inflate the apparent savings. The generated files represent what the refactored sources actually produce.
@@ -35,7 +35,7 @@ Use `.generated/` as the baseline — not the originals. The originals may conta
 Run `verify.sh` and record the result:
 
 ```bash
-samples/{sample-name}/.refactored/verify.sh
+samples/{sample-name}/.refactoring/refactored/verify.sh
 ```
 
 Report PASS or FAIL. On FAIL, list the files that differ.

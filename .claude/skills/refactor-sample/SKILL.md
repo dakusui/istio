@@ -98,21 +98,22 @@ samples/
   {sample-name}/              ← originals — DO NOT MODIFY
     *.yaml
     *.json
-    .refactored/              ← refactored jq++ source files
-      generate.sh             ← build .sandbox/ from sources (see Step 4)
-      verify.sh               ← check .sandbox/ vs .generated/ (see Step 5)
-      shared/                 ← base files reused within this sample
-        *.yaml++
+    .refactoring/
+      refactored/             ← refactored jq++ source files
+        generate.sh           ← build sandbox/ from sources (see Step 4)
+        verify.sh             ← check sandbox/ vs generated/ (see Step 5)
+        shared/               ← base files reused within this sample
+          *.yaml++
+          *.json++
+        {name}.yaml++         ← one file per output YAML; use --- to separate documents
         *.json++
-      {name}.yaml++           ← one file per output YAML; use --- to separate documents
-      *.json++
-      REFACTORING_REPORT.md   ← metrics, verification, findings
-    .sandbox/                 ← working output; default target of generate.sh (not committed)
-      *.yaml
-      *.json
-    .generated/               ← committed output baseline; promoted from .sandbox when verified
-      *.yaml
-      *.json
+        REFACTORING_REPORT.md ← metrics, verification, findings
+      sandbox/                ← working output; default target of generate.sh (not committed)
+        *.yaml
+        *.json
+      generated/              ← committed output baseline; promoted from sandbox when verified
+        *.yaml
+        *.json
 ```
 
 ### File-naming convention
@@ -146,7 +147,7 @@ Read all `.yaml` and `.json` files in `samples/{sample-name}/` recursively. For 
 
 Decide what to extract:
 
-- **Repeated structure across documents in the same sample** → shared base in `.refactored/shared/`
+- **Repeated structure across documents in the same sample** → shared base in `.refactoring/refactored/shared/`
 - **Parametric variants** (same structure, different values) → base file + per-variant extends
 - **Derived values** (e.g., name built from app + version) → `eval:string:refexpr(...)` within the file
 
@@ -164,11 +165,11 @@ SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
 "${SKILL_BIN}/ysplit" --out-dir /tmp/ samples/{sample-name}/file.yaml
 ```
 
-**Shared base files** (in `.refactored/shared/`):
+**Shared base files** (in `.refactoring/refactored/shared/`):
 Provide the common structure. Only include fields that truly appear in all variants — do not add empty `{}` or `[]` placeholders for fields that some variants omit, as they will be inherited even when unwanted.
 
 ```yaml
-# .refactored/shared/deployment-base.yaml++
+# .refactoring/refactored/shared/deployment-base.yaml++
 apiVersion: apps/v1
 kind: Deployment
 spec:
@@ -180,12 +181,12 @@ spec:
       containers: []
 ```
 
-Path from a top-level `.refactored/` file to a shared base: `shared/base.yaml++`
-Path from a subdirectory `.refactored/gateway-api/` file to a shared base: `../shared/base.yaml++`
+Path from a top-level `.refactoring/refactored/` file to a shared base: `shared/base.yaml++`
+Path from a subdirectory `.refactoring/refactored/gateway-api/` file to a shared base: `../shared/base.yaml++`
 
 **Variant files** using `$extends`:
 ```yaml
-# .refactored/helloworld-deployment-v1.yaml++
+# .refactoring/refactored/helloworld-deployment-v1.yaml++
 $extends:
   - shared/deployment-base.yaml++
 metadata:
@@ -304,32 +305,32 @@ See the [jq++ builtins reference](https://dakusui.github.io/jqplusplus/reference
 
 ### 4. Create generate.sh and generate output
 
-Create `samples/{sample-name}/.refactored/generate.sh` using this template:
+Create `samples/{sample-name}/.refactoring/refactored/generate.sh` using this template:
 
 ```bash
 #!/usr/bin/env bash
 # Usage:
 #   generate.sh [OUT_DIR]
 #
-# Assembles .refactored/ sources into OUT_DIR (default: ../.sandbox).
+# Assembles .refactoring/refactored/ sources into OUT_DIR (default: .refactoring/sandbox).
 # _-prefixed keys (private jq++ variables) are stripped from all output files.
 #
 # Typical workflow:
-#   generate.sh                       # build into .sandbox (default)
-#   diff -r ../.sandbox ../.generated # compare with committed baseline
-#   generate.sh ../.generated         # promote to .generated when satisfied
+#   generate.sh                                 # build into .refactoring/sandbox (default)
+#   diff -r ../.refactoring/sandbox ../.refactoring/generated
+#   generate.sh ../.refactoring/generated       # promote to .refactoring/generated when satisfied
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
-SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
-export JF_PATH="${SAMPLE_DIR}/.refactored/shared:${REPO_ROOT}/samples/shared"
+SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
+export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactored"
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactoring/refactored"
 # Add one line per subdirectory, e.g.:
-# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api" "${SAMPLE_DIR}/.refactored/gateway-api"
+# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api" "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
 
 # ── strip private _-prefixed keys ─────────────────────────────────────────────
 while IFS= read -r f; do
@@ -342,15 +343,15 @@ done < <(find "${OUT_DIR}" -name "*.yaml" | sort)
 Adjust the `yjoin` lines to match the sample's subdirectory structure. Make it executable:
 
 ```bash
-chmod +x samples/{sample-name}/.refactored/generate.sh
+chmod +x samples/{sample-name}/.refactoring/refactored/generate.sh
 ```
 
 JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only. Add them to the assemble section of `generate.sh`:
 ```bash
-jq++ "${SAMPLE_DIR}/.refactored/config.json++" | jq . > "${OUT_DIR}/config.json"
+jq++ "${SAMPLE_DIR}/.refactoring/refactored/config.json++" | jq . > "${OUT_DIR}/config.json"
 ```
 
-Also create `samples/{sample-name}/.refactored/verify.sh` using this template:
+Also create `samples/{sample-name}/.refactoring/refactored/verify.sh` using this template:
 
 ```bash
 #!/usr/bin/env bash
@@ -358,7 +359,7 @@ Also create `samples/{sample-name}/.refactored/verify.sh` using this template:
 #   verify.sh [DIR_A [DIR_B]]
 #
 # Checks semantic equivalence between DIR_A and DIR_B.
-# Defaults: DIR_A=../.generated  DIR_B=../.sandbox
+# Defaults: DIR_A=.refactoring/generated  DIR_B=.refactoring/sandbox
 #
 # YAML files are compared via: yq -S '.'  (key-sorted, null-filtered)
 # JSON files are compared via: jq -S .
@@ -366,9 +367,9 @@ Also create `samples/{sample-name}/.refactored/verify.sh` using this template:
 # Exits 0 if all files match, non-zero if any differ.
 
 set -euo pipefail
-SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-DIR_A="${1:-${SAMPLE_DIR}/.generated}"
-DIR_B="${2:-${SAMPLE_DIR}/.sandbox}"
+SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+DIR_A="${1:-${SAMPLE_DIR}/.refactoring/generated}"
+DIR_B="${2:-${SAMPLE_DIR}/.refactoring/sandbox}"
 
 pass=0
 fail=0
@@ -427,28 +428,28 @@ fi
 
 Make it executable:
 ```bash
-chmod +x samples/{sample-name}/.refactored/verify.sh
+chmod +x samples/{sample-name}/.refactoring/refactored/verify.sh
 ```
 
 ### 5. Run and verify
 
-Run `generate.sh` to build into `.sandbox/`, verify semantic equivalence against `.generated/`, then promote:
+Run `generate.sh` to build into `.refactoring/sandbox/`, verify semantic equivalence against `.refactoring/generated/`, then promote:
 
 ```bash
-# Build into .sandbox (default)
-samples/{sample-name}/.refactored/generate.sh
+# Build into .refactoring/sandbox (default)
+samples/{sample-name}/.refactoring/refactored/generate.sh
 
-# Verify .sandbox matches .generated
-samples/{sample-name}/.refactored/verify.sh
+# Verify .refactoring/sandbox matches .refactoring/generated
+samples/{sample-name}/.refactoring/refactored/verify.sh
 ```
 
 If diffs exist, investigate whether they are:
 - Purely cosmetic (key ordering, trailing newlines) → acceptable, note in report
 - Structural differences → fix the jq++ sources before reporting
 
-Once all diffs pass, promote `.sandbox/` to `.generated/`:
+Once all diffs pass, promote `.refactoring/sandbox/` to `.refactoring/generated/`:
 
 ```bash
-samples/{sample-name}/.refactored/generate.sh samples/{sample-name}/.generated
+samples/{sample-name}/.refactoring/refactored/generate.sh samples/{sample-name}/.refactoring/generated
 ```
 

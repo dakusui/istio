@@ -2,26 +2,24 @@
 # Usage:
 #   generate.sh [OUT_DIR]
 #
-# Assembles .refactored/ sources into OUT_DIR (default: ../.sandbox).
+# Assembles .refactoring/refactored/ sources into OUT_DIR (default: .refactoring/sandbox).
 # _-prefixed keys (private jq++ variables) are stripped from all output files.
 #
 # Typical workflow:
-#   generate.sh                       # build into .sandbox (default)
-#   diff -r ../.sandbox ../.generated # compare with committed baseline
-#   generate.sh ../.generated         # promote to .generated when satisfied
+#   generate.sh                                 # build into .refactoring/sandbox (default)
+#   diff -r ../.refactoring/sandbox ../.refactoring/generated
+#   generate.sh ../.refactoring/generated       # promote to .refactoring/generated when satisfied
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
-SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
-export JF_PATH="${SAMPLE_DIR}/.refactored/shared:${REPO_ROOT}/samples/shared"
-
-mkdir -p "${OUT_DIR}/platform/kube" "${OUT_DIR}/networking"
+SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
+export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/platform/kube" "${SAMPLE_DIR}/.refactored/platform/kube"
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/networking"    "${SAMPLE_DIR}/.refactored/networking"
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}"              "${SAMPLE_DIR}/.refactoring/refactored"
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api"  "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
 
 # ── strip private _-prefixed keys ─────────────────────────────────────────────
 while IFS= read -r f; do
