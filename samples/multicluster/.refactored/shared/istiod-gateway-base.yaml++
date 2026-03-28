@@ -1,4 +1,0 @@
-$extends:
-  - gateway-base.yaml++
-metadata:
-  name: istiod-gateway

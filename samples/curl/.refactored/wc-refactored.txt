@@ -1,7 +1,0 @@
-  13   21 samples/curl/.refactored/curl-service.yaml++
-  28   47 samples/curl/.refactored/curl-deployment.yaml++
-   2    4 samples/curl/.refactored/shared/service-account-base.yaml++
-   5    9 samples/curl/.refactored/shared/service-base.yaml++
-   9   14 samples/curl/.refactored/shared/deployment-base.yaml++
-   4    6 samples/curl/.refactored/curl-serviceaccount.yaml++
-  61  101 total

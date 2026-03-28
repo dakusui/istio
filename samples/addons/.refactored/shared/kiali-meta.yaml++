@@ -1,4 +1,0 @@
-$extends:
-  - kiali-labels.yaml++
-metadata:
-  namespace: istio-system

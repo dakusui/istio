@@ -1,9 +1,0 @@
-metadata:
-  labels:
-    helm.sh/chart: kiali-server-2.22.0
-    app: kiali
-    app.kubernetes.io/name: kiali
-    app.kubernetes.io/instance: kiali
-    version: "v2.22.0"
-    app.kubernetes.io/version: "v2.22.0"
-    app.kubernetes.io/part-of: "kiali"

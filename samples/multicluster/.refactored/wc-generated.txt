@@ -1,4 +1,0 @@
-  53   88 samples/multicluster/.generated/expose-istiod.yaml
-  71  117 samples/multicluster/.generated/expose-istiod-https.yaml
-  16   26 samples/multicluster/.generated/expose-services.yaml
- 140  231 total

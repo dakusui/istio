@@ -1,7 +1,0 @@
-$extends:
-  - shared/service-entry-https-base.yaml++
-metadata:
-  name: pypi-https
-spec:
-  hosts:
-  - pypi.org
