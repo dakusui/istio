@@ -1,0 +1,11 @@
+$extends:
+  - ../shared/httproute-reviews-base.yaml++
+spec:
+  rules:
+    - backendRefs:
+        - name: reviews-v1
+          port: 9080
+          weight: 50
+        - name: reviews-v3
+          port: 9080
+          weight: 50

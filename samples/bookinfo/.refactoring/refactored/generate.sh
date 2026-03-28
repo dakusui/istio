@@ -17,11 +17,13 @@ SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
 export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
 
-mkdir -p "${OUT_DIR}/platform/kube" "${OUT_DIR}/networking"
+mkdir -p "${OUT_DIR}/platform/kube" "${OUT_DIR}/networking" "${OUT_DIR}/gateway-api" "${OUT_DIR}/policy"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/platform/kube" "${SAMPLE_DIR}/.refactoring/refactored/platform/kube"
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/networking"    "${SAMPLE_DIR}/.refactoring/refactored/networking"
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api"   "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/policy"        "${SAMPLE_DIR}/.refactoring/refactored/policy"
 
 # ── strip private _-prefixed keys ─────────────────────────────────────────────
 while IFS= read -r f; do
