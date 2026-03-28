@@ -15,7 +15,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
-export JF_PATH="${SAMPLE_DIR}/shared:${REPO_ROOT}/samples/shared"
+export JF_PATH="${SAMPLE_DIR}/.refactored/shared:${REPO_ROOT}/samples/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/skaffold" "${SAMPLE_DIR}/.refactored/skaffold"
