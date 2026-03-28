@@ -99,13 +99,17 @@ samples/
     *.yaml
     *.json
     .refactored/              ← refactored jq++ source files
+      generate.sh             ← run this to build output (see Step 4)
       shared/                 ← base files reused within this sample
         *.yaml++
         *.json++
       {name}.yaml++           ← one file per output YAML; use --- to separate documents
       *.json++
       REFACTORING_REPORT.md   ← metrics, verification, findings
-    .generated/               ← output of yjoin; mirrors original file layout
+    .sandbox/                 ← working output; default target of generate.sh (not committed)
+      *.yaml
+      *.json
+    .generated/               ← committed output baseline; promoted from .sandbox when verified
       *.yaml
       *.json
 ```
@@ -251,17 +255,18 @@ Create `samples/{sample-name}/.refactored/generate.sh` using this template:
 # Usage:
 #   generate.sh [OUT_DIR]
 #
-# Assembles .refactored/ sources into OUT_DIR (default: ../.generated).
+# Assembles .refactored/ sources into OUT_DIR (default: ../.sandbox).
 # _-prefixed keys (private jq++ variables) are stripped from all output files.
 #
-# To compare a local edit against the current .generated/:
-#   generate.sh /tmp/{sample-name}-preview
-#   diff -r /tmp/{sample-name}-preview ../.generated/
+# Typical workflow:
+#   generate.sh                       # build into .sandbox (default)
+#   diff -r ../.sandbox ../.generated # compare with committed baseline
+#   generate.sh ../.generated         # promote to .generated when satisfied
 
 set -euo pipefail
 SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.generated}"
+OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactored"
@@ -276,44 +281,45 @@ while IFS= read -r f; do
 done < <(find "${OUT_DIR}" -name "*.yaml" | sort)
 ```
 
-Adjust the `yjoin` lines to match the sample's subdirectory structure. Make it executable and run it:
+Adjust the `yjoin` lines to match the sample's subdirectory structure. Make it executable:
 
 ```bash
 chmod +x samples/{sample-name}/.refactored/generate.sh
-samples/{sample-name}/.refactored/generate.sh
 ```
 
-JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only:
+JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only. Add them to the assemble section of `generate.sh`:
 ```bash
-jq++ "samples/{sample-name}/.refactored/config.json++" | jq . \
-  > "samples/{sample-name}/.generated/config.json"
-```
-
-The `OUT_DIR` argument lets you generate to a temporary location and compare:
-```bash
-samples/{sample-name}/.refactored/generate.sh /tmp/{sample-name}-preview
-diff -r /tmp/{sample-name}-preview samples/{sample-name}/.generated/
+jq++ "${SAMPLE_DIR}/.refactored/config.json++" | jq . > "${OUT_DIR}/config.json"
 ```
 
 ### 5. Run and verify
 
-Run `generate.sh` to populate `.generated/`, then verify semantic equivalence (YAML formatting differences are not errors):
+Run `generate.sh` to build into `.sandbox/`, verify semantic equivalence against the originals, then promote to `.generated/`:
 
 ```bash
-# For each YAML file pair (kislyuk/yq: use -S flag to sort keys via jq):
+# Build into .sandbox (default)
+samples/{sample-name}/.refactored/generate.sh
+
+# Verify each YAML file (kislyuk/yq: use -S flag to sort keys via jq):
 diff \
   <(yq -S '.' samples/{sample-name}/file.yaml | grep -v '^null$') \
-  <(yq -S '.' samples/{sample-name}/.generated/file.yaml | grep -v '^null$')
+  <(yq -S '.' samples/{sample-name}/.sandbox/file.yaml | grep -v '^null$')
 
 # For JSON:
 diff \
   <(jq -S . samples/{sample-name}/file.json) \
-  <(jq -S . samples/{sample-name}/.generated/file.json)
+  <(jq -S . samples/{sample-name}/.sandbox/file.json)
 ```
 
 If diffs exist, investigate whether they are:
 - Purely cosmetic (key ordering, trailing newlines) → acceptable, note in report
 - Structural differences → fix the jq++ sources before reporting
+
+Once all diffs pass, promote `.sandbox/` to `.generated/`:
+
+```bash
+samples/{sample-name}/.refactored/generate.sh samples/{sample-name}/.generated
+```
 
 ### 6. Produce the report
 

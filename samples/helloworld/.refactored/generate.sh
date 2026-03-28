@@ -2,17 +2,18 @@
 # Usage:
 #   generate.sh [OUT_DIR]
 #
-# Assembles .refactored/ sources into OUT_DIR (default: ../.generated).
+# Assembles .refactored/ sources into OUT_DIR (default: ../.sandbox).
 # _-prefixed keys (private jq++ variables) are stripped from all output files.
 #
-# To compare a local edit against the current .generated/:
-#   generate.sh /tmp/helloworld-preview
-#   diff -r /tmp/helloworld-preview ../.generated/
+# Typical workflow:
+#   generate.sh                       # build into .sandbox (default)
+#   diff -r ../.sandbox ../.generated # compare with committed baseline
+#   generate.sh ../.generated         # promote to .generated when satisfied
 
 set -euo pipefail
 SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.generated}"
+OUT_DIR="${1:-${SAMPLE_DIR}/.sandbox}"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}"              "${SAMPLE_DIR}/.refactored"
