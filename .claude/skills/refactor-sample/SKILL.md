@@ -21,6 +21,46 @@ jq++ --version && yq --version && jq --version
 
 If any are missing, stop and tell the user.
 
+## Skill Utilities
+
+Three scripts are provided under `.claude/skills/refactor-sample/bin/` and should be invoked with their full path (or add the directory to PATH):
+
+### `ystrip [FILE ...]`
+
+Removes all object keys beginning with `_` from YAML input, recursively at any depth. Reads from stdin when no files are given; handles multi-document YAML.
+
+```bash
+cat elaborated.yaml | "${SKILL_BIN}/ystrip"
+"${SKILL_BIN}/ystrip" file.yaml
+```
+
+Useful for stripping private/internal annotations (e.g., `_comment`, `_internal`) added during authoring before feeding output to downstream tools.
+
+### `yjoin [--out-dir OUT_DIR] [SRC_DIR]`
+
+Concatenates `{stem}@{id}.yaml[++]` part-files in `SRC_DIR` into `{stem}.yaml` in `OUT_DIR`.
+
+- Files named `{stem}@{id}.yaml++` are rendered via `jq++ | yq -y '.'`
+- Files named `{stem}@{id}.yaml` are rendered via `yq -y '.'`
+- Files named `{name}.yaml++` (no `@`) are treated as single-doc passthrough
+- Files within each stem group are sorted lexicographically by identifier — use numeric prefixes (`01-`, `02-`, …) to control document order
+
+Typical invocation from `.refactored/`:
+```bash
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+"${SKILL_BIN}/yjoin" --out-dir ../.generated .
+```
+
+### `ysplit [--out-dir OUT_DIR] FILE [FILE ...]`
+
+Splits a multi-document `.yaml` file into `{stem}@{NN}.yaml` parts (two-digit sequence, e.g. `@01`, `@02`). Each document is re-formatted through `yq -y '.'`. Output files go next to the input by default.
+
+```bash
+"${SKILL_BIN}/ysplit" --out-dir .refactored/ samples/foo/foo.yaml
+```
+
+These tools replace hand-written `generate.sh` assembly blocks. Use `yjoin` wherever a `generate.sh` would previously concatenate files.
+
 ## Key jq++ Concepts
 
 jq++ elaborates `.yaml++` / `.json++` files into plain YAML/JSON. All directives are valid YAML/JSON — existing tooling still works on source files unchanged.
@@ -52,13 +92,35 @@ samples/
       shared/                 ← base files reused within this sample
         *.yaml++
         *.json++
-      *.yaml++
+      {stem}@{NN}-{id}.yaml++ ← part-files (grouped by stem, ordered by NN)
+      {name}.yaml++           ← single-doc passthrough (no @)
       *.json++
-      generate.sh             ← produces .generated/ from these sources
       REFACTORING_REPORT.md   ← metrics, verification, findings
-    .generated/               ← output of generate.sh; mirrors original file layout
+    .generated/               ← output of yjoin; mirrors original file layout
       *.yaml
       *.json
+```
+
+### File-naming convention for part-files
+
+Multi-document YAML files are split into individual part-files using the `@` separator:
+
+```
+{stem}@{NN}-{description}.yaml++
+```
+
+- **`stem`** — base name of the output file (may contain hyphens, e.g. `httpbin-gateway`)
+- **`@`** — unambiguous separator between stem and identifier
+- **`NN`** — zero-padded sequence number controlling concatenation order (`01`, `02`, …)
+- **`description`** — human-readable label (e.g. `serviceaccount`, `service`, `deployment-v1`)
+
+Examples:
+```
+httpbin@01-serviceaccount.yaml++   →  httpbin.yaml  (doc 1)
+httpbin@02-service.yaml++          →  httpbin.yaml  (doc 2)
+httpbin@03-deployment.yaml++       →  httpbin.yaml  (doc 3)
+httpbin-gateway@01-gateway.yaml++  →  httpbin-gateway.yaml  (doc 1)
+httpbin-gateway@02-vs.yaml++       →  httpbin-gateway.yaml  (doc 2)
 ```
 
 ## Step-by-Step Workflow
@@ -85,9 +147,20 @@ A useful heuristic: if removing a repetition saves fewer than ~5 lines total, it
 ### 3. Create the jq++ source files
 
 **Splitting multi-document YAML files:**
-Each `---`-document gets its own `.yaml++` file. Name clearly:
-- `{sample}-service.yaml++`
-- `{sample}-deployment-v1.yaml++`
+Each `---`-document gets its own `.yaml++` file using the `@` naming convention.
+Use `ysplit` to generate the initial split, then rename/refactor as needed:
+
+```bash
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+"${SKILL_BIN}/ysplit" --out-dir .refactored/ samples/{sample-name}/file.yaml
+# produces: .refactored/file@01.yaml  .refactored/file@02.yaml  …
+# rename to add descriptions: file@01-serviceaccount.yaml++ etc.
+```
+
+Name part-files clearly with a numeric prefix and description:
+- `{sample}@01-serviceaccount.yaml++`
+- `{sample}@02-service.yaml++`
+- `{sample}@03-deployment-v1.yaml++`
 
 **Shared base files** (in `.refactored/shared/`):
 Provide the common structure. Only include fields that truly appear in all variants — do not add empty `{}` or `[]` placeholders for fields that some variants omit, as they will be inherited even when unwanted.
@@ -172,43 +245,38 @@ metadata:
 
 **Comments:** YAML comments are stripped during jq++ → yq round-trip. If the original has significant comments, note this in the report.
 
-### 4. Create generate.sh
+### 4. Generate output with yjoin
 
-Place `generate.sh` in `samples/{sample-name}/.refactored/` and **make it executable with `chmod +x generate.sh`** — this step is required, not optional.
+No hand-written `generate.sh` is needed. Run `yjoin` from `.refactored/` to produce `.generated/`:
 
 ```bash
-#!/usr/bin/env bash
-# generate.sh — regenerate ../.generated/ from jq++ sources in this directory
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUT_DIR="${SCRIPT_DIR}/../.generated"
-mkdir -p "${OUT_DIR}"
-
-# ---- single-document YAML example ----
-jq++ "${SCRIPT_DIR}/resource.yaml++" | yq -y '.' > "${OUT_DIR}/resource.yaml"
-
-# ---- multi-document YAML example (concatenate with ---) ----
-{
-  jq++ "${SCRIPT_DIR}/foo-service.yaml++"       | yq -y '.'
-  printf -- "---\n"
-  jq++ "${SCRIPT_DIR}/foo-deployment-v1.yaml++" | yq -y '.'
-  printf -- "---\n"
-  jq++ "${SCRIPT_DIR}/foo-deployment-v2.yaml++" | yq -y '.'
-} > "${OUT_DIR}/foo.yaml"
-
-# ---- JSON example ----
-jq++ "${SCRIPT_DIR}/config.json++" | jq . > "${OUT_DIR}/config.json"
-
-echo "Generated: ${OUT_DIR}"
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+"${SKILL_BIN}/yjoin" \
+  --out-dir "samples/{sample-name}/.generated" \
+  "samples/{sample-name}/.refactored"
 ```
 
-Fill in the actual files matching the original sample's structure. Preserve original filenames and directory layout under `.generated/`.
+For samples with subdirectories (e.g. `gateway-api/`, `platform/kube/`), run `yjoin` once per subdirectory with the appropriate `--out-dir`:
+
+```bash
+"${SKILL_BIN}/yjoin" \
+  --out-dir "samples/{sample-name}/.generated/gateway-api" \
+  "samples/{sample-name}/.refactored/gateway-api"
+```
+
+JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only:
+```bash
+jq++ "samples/{sample-name}/.refactored/config.json++" | jq . \
+  > "samples/{sample-name}/.generated/config.json"
+```
 
 ### 5. Run and verify
 
 ```bash
-bash samples/{sample-name}/.refactored/generate.sh
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+"${SKILL_BIN}/yjoin" \
+  --out-dir "samples/{sample-name}/.generated" \
+  "samples/{sample-name}/.refactored"
 ```
 
 Verify semantic equivalence (YAML formatting differences are not errors):
