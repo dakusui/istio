@@ -85,7 +85,7 @@ jq++ elaborates `.yaml++` / `.json++` files into plain YAML/JSON. All directives
 
 Run: `jq++ file.yaml++` → plain JSON on stdout. Pipe to `yq -y '.'` for YAML output.
 
-Path resolution: jq++ resolves `$extends` paths relative to the source file's directory, then checks `JF_PATH`. Use relative paths for self-contained samples.
+Path resolution: jq++ resolves `$extends` paths relative to the source file's directory, then checks `JF_PATH`. Because `generate.sh` puts the sample's `shared/` directory and `samples/shared/` on `JF_PATH`, shared base files can be referenced by bare filename (e.g., `deployment-base.yaml++`) from any subdirectory — no `../shared/` prefix needed. Always use the bare filename for shared bases; relative paths are only needed for files that are not on `JF_PATH`.
 
 **Note on `yq` flavors:** The `yq` on this system is the `kislyuk/yq` wrapper (a jq wrapper for YAML). Its YAML output flag is `-y '.'`, not `-P`. Always use `yq -y '.'` (never `yq -P`).
 
@@ -181,14 +181,17 @@ spec:
       containers: []
 ```
 
-Path from a top-level `.refactoring/refactored/` file to a shared base: `shared/base.yaml++`
-Path from a subdirectory `.refactoring/refactored/gateway-api/` file to a shared base: `../shared/base.yaml++`
+Reference shared bases by bare filename from any depth — JF_PATH handles the lookup:
+```yaml
+$extends:
+  - base.yaml++   # resolves via JF_PATH regardless of subdirectory depth
+```
 
 **Variant files** using `$extends`:
 ```yaml
 # .refactoring/refactored/helloworld-deployment-v1.yaml++
 $extends:
-  - shared/deployment-base.yaml++
+  - deployment-base.yaml++
 metadata:
   name: helloworld-v1
   labels:

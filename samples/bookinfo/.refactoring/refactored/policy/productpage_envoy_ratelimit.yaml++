@@ -1,5 +1,5 @@
 $extends:
-  - ../shared/envoyfilter-ingressgateway-base.yaml++
+  - envoyfilter-ingressgateway-base.yaml++
 metadata:
   name: filter-ratelimit
 spec:
@@ -49,7 +49,7 @@ spec:
                           port_value: 8081
 ---
 $extends:
-  - ../shared/envoyfilter-ingressgateway-base.yaml++
+  - envoyfilter-ingressgateway-base.yaml++
 metadata:
   name: filter-ratelimit-svc
 spec:
