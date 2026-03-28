@@ -1,0 +1,6 @@
+  25   43 samples/httpbin/.generated/gateway-api/httpbin-gateway.yaml
+  30   48 samples/httpbin/.generated/httpbin-gateway.yaml
+  38   63 samples/httpbin/.generated/httpbin-nodeport.yaml
+  41   78 samples/httpbin/.generated/sample-client/fortio-deploy.yaml
+  43   71 samples/httpbin/.generated/httpbin.yaml
+ 177  303 total

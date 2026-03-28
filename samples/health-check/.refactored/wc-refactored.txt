@@ -1,0 +1,7 @@
+   8   13 samples/health-check/.refactored/liveness-command-service.yaml++
+  24   37 samples/health-check/.refactored/liveness-http-same-port-deployment.yaml++
+   9   14 samples/health-check/.refactored/shared/service-base.yaml++
+  12   17 samples/health-check/.refactored/shared/deployment-base.yaml++
+   8   13 samples/health-check/.refactored/liveness-http-same-port-service.yaml++
+  21   36 samples/health-check/.refactored/liveness-command-deployment.yaml++
+  82  130 total

@@ -1,0 +1,22 @@
+$extends:
+- ../shared/argocd-app-ambient-cluster-base.yaml++
+metadata:
+  name: istio-tags
+spec:
+  destination:
+    namespace: istio-system
+  source:
+    path: tag-chart
+    repoURL: '{repo-placeholder}'
+    targetRevision: HEAD
+    helm:
+      valuesObject:
+        base:
+          tags:
+            default:
+              revision: "1-18-5"
+            stable:
+              revision: "1-18-5"
+            rapid:
+              revision: "1-19-3"
+          istiodservice: "1-18-5"

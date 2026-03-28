@@ -1,0 +1,4 @@
+$extends:
+  - prometheus-labels.yaml++
+metadata:
+  namespace: istio-system

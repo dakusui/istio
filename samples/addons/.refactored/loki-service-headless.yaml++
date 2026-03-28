@@ -1,0 +1,20 @@
+$extends:
+  - shared/loki-meta.yaml++
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-headless
+  annotations:
+  labels:
+    variant: headless
+    prometheus.io/service-monitor: "false"
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: 3100
+      targetPort: http-metrics
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/instance: loki

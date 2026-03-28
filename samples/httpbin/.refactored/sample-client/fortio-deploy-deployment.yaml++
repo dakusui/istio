@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortio-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortio
+  template:
+    metadata:
+      annotations:
+        proxy.istio.io/config: |-
+          proxyStatsMatcher:
+            inclusionPrefixes:
+            - "cluster.outbound"
+            - "cluster_manager"
+            - "listener_manager"
+            - "server"
+            - "cluster.xds-grpc"
+      labels:
+        app: fortio
+    spec:
+      containers:
+      - name: fortio
+        image: docker.io/fortio/fortio:latest_release
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http-fortio
+        - containerPort: 8079
+          name: grpc-ping

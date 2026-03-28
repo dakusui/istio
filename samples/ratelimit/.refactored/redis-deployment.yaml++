@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - image: docker.io/redis:alpine
+        imagePullPolicy: IfNotPresent
+        name: redis
+        ports:
+        - name: redis
+          containerPort: 6379
+      restartPolicy: Always
+      serviceAccountName: ""

@@ -1,0 +1,6 @@
+$extends:
+  - shared/httpbin-deployment-base.yaml++
+spec:
+  template:
+    spec:
+      serviceAccountName: httpbin

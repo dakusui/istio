@@ -1,0 +1,6 @@
+$extends:
+  - shared/service-base.yaml++
+spec:
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv6

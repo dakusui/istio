@@ -1,0 +1,353 @@
+{
+  "metadata": {
+    "skill_name": "refactor-sample",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-03-27T20:53:05Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": true,
+          "evidence": "chmod +x applied; file is executable"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": true,
+          "evidence": "samples/helloworld/.generated/helloworld.yaml exists"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": true,
+          "evidence": "6/6 PASS via yq -S diff"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": true,
+          "evidence": "deployment-v1/v2, service, service-dual-stack all use $extends"
+        },
+        {
+          "text": "line_reduction",
+          "passed": false,
+          "evidence": "250 original -> 279 refactored (+12%); split overhead for gateway/route files outweighs savings"
+        },
+        {
+          "text": "two_deployments_share_base",
+          "passed": true,
+          "evidence": "Both extend shared/deployment-base.yaml++"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": true,
+          "evidence": "chmod +x applied"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": true,
+          "evidence": "samples/sleep/.generated/sleep.yaml exists"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": true,
+          "evidence": "PASS via yq -S diff"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": true,
+          "evidence": "All 3 yaml++ files use $extends"
+        },
+        {
+          "text": "line_reduction",
+          "passed": true,
+          "evidence": "66 -> 61 (-8%)"
+        },
+        {
+          "text": "shared_base_referenced",
+          "passed": true,
+          "evidence": "All files reference shared/"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": true,
+          "evidence": "chmod +x applied"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": true,
+          "evidence": "samples/curl/.generated/curl.yaml exists"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": true,
+          "evidence": "PASS via yq -S diff"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": true,
+          "evidence": "All 3 yaml++ files use $extends"
+        },
+        {
+          "text": "line_reduction",
+          "passed": true,
+          "evidence": "66 -> 61 (-8%)"
+        },
+        {
+          "text": "shared_base_referenced",
+          "passed": true,
+          "evidence": "All files reference shared/"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333333333333334,
+        "passed": 5,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": true,
+          "evidence": "chmod +x applied manually after agent wrote file"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": true,
+          "evidence": "samples/helloworld/.generated-baseline/ produced after manual run"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": true,
+          "evidence": "6/6 PASS via yq -S diff"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": true,
+          "evidence": "Baseline also used $extends for deployments and services"
+        },
+        {
+          "text": "line_reduction",
+          "passed": false,
+          "evidence": "Baseline also increased lines due to file-split overhead"
+        },
+        {
+          "text": "two_deployments_share_base",
+          "passed": true,
+          "evidence": "Baseline agent also chose shared deployment-base pattern"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": true,
+          "evidence": "chmod +x applied manually after agent wrote file"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": true,
+          "evidence": "samples/sleep/.generated-baseline/sleep.yaml exists"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": true,
+          "evidence": "PASS via yq -S diff"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": true,
+          "evidence": "Baseline used $extends for all 3 resources"
+        },
+        {
+          "text": "line_reduction",
+          "passed": true,
+          "evidence": "Baseline also ~66 -> ~67 lines; comparable"
+        },
+        {
+          "text": "shared_base_referenced",
+          "passed": true,
+          "evidence": "Baseline used shared/ dir"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "generate_sh_exists_and_executable",
+          "passed": false,
+          "evidence": "Agent failed early due to Bash denial; no files created"
+        },
+        {
+          "text": "generated_output_exists",
+          "passed": false,
+          "evidence": "No .generated-baseline/ produced"
+        },
+        {
+          "text": "semantic_equivalence",
+          "passed": false,
+          "evidence": "Could not verify \u2014 no output produced"
+        },
+        {
+          "text": "uses_extends_or_local",
+          "passed": false,
+          "evidence": "No source files created"
+        },
+        {
+          "text": "line_reduction",
+          "passed": false,
+          "evidence": "No refactoring done"
+        },
+        {
+          "text": "shared_base_referenced",
+          "passed": false,
+          "evidence": "No files created"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9444,
+        "stddev": 0.0962,
+        "min": 0.8333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.6111,
+        "stddev": 0.5358,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.33",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

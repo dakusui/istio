@@ -1,0 +1,8 @@
+$extends:
+  - shared/service-base.yaml++
+metadata:
+  name: liveness-http
+spec:
+  ports:
+  - name: http
+    port: 8001

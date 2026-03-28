@@ -1,0 +1,82 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: filter-local-ratelimit-svc
+  namespace: istio-system
+spec:
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+        listener:
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.local_ratelimit
+          typed_config:
+            '@type': type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+            value:
+              stat_prefix: http_local_rate_limiter
+    - applyTo: HTTP_ROUTE
+      match:
+        context: SIDECAR_INBOUND
+        routeConfiguration:
+          vhost:
+            name: inbound|http|8000
+            route:
+              action: ANY
+      patch:
+        operation: MERGE
+        value:
+          route:
+            rate_limits:
+              - actions:
+                  - remote_address: {}
+              - actions:
+                  - header_value_match:
+                      descriptor_value: productpage
+                      expect_match: true
+                      headers:
+                        - name: :path
+                          string_match:
+                            ignore_case: true
+                            prefix: /productpage
+          typed_per_filter_config:
+            envoy.filters.http.local_ratelimit:
+              '@type': type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+              descriptors:
+                - entries:
+                    - key: header_match
+                      value: productpage
+                  token_bucket:
+                    fill_interval: 60s
+                    max_tokens: 10
+                    tokens_per_fill: 10
+              enable_x_ratelimit_headers: DRAFT_VERSION_03
+              filter_enabled:
+                default_value:
+                  denominator: HUNDRED
+                  numerator: 100
+                runtime_key: test_enabled
+              filter_enforced:
+                default_value:
+                  denominator: HUNDRED
+                  numerator: 100
+                runtime_key: test_enabled
+              response_headers_to_add:
+                - append: false
+                  header:
+                    key: x-local-rate-limit
+                    value: 'true'
+              stat_prefix: test_enabled
+              token_bucket:
+                fill_interval: 60s
+                max_tokens: 100
+                tokens_per_fill: 100
+  workloadSelector:
+    labels:
+      app: productpage

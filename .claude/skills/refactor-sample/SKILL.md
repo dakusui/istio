@@ -235,12 +235,12 @@ Write the report to `samples/{sample-name}/.refactored/REFACTORING_REPORT.md`.
 
 **Metrics table:**
 
-| | Original | Refactored sources | Change |
-|---|---|---|---|
-| Lines | N | N | −N (−X%) |
-| Words | N | N | −N (−X%) |
+| | Original | Refactored sources | of which: shared | Change |
+|---|---|---|---|---|
+| Lines | N | N | N | −N (−X%) |
+| Words | N | N | N | −N (−X%) |
 
-Count only `.yaml`/`.json` originals vs `.yaml++`/`.json++` refactored sources (exclude `generate.sh` from the word/line counts). Use `wc -lw` for counts.
+Count only `.yaml`/`.json` originals vs `.yaml++`/`.json++` refactored sources (exclude `generate.sh` from the word/line counts). Use `wc -lw` for counts. The "of which: shared" column counts only files under `.refactored/shared/`.
 
 **Verification:** PASS or FAIL with details of any remaining diffs.
 

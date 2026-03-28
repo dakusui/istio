@@ -1,0 +1,25 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: istio-base
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    deploy:
+      helm:
+        releases:
+          - name: istio-base
+            chartPath: ../../../manifests/charts/base
+            namespace: istio-system
+            createNamespace: true
+  - name: run
+    activation:
+      - command: run
+    deploy:
+      helm:
+        releases:
+          - name: istio-base
+            remoteChart: base
+            repo: https://istio-release.storage.googleapis.com/charts
+            namespace: istio-system
+            createNamespace: true

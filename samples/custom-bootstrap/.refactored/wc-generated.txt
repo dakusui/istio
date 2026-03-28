@@ -1,0 +1,3 @@
+  30   48 samples/custom-bootstrap/.generated/example-app.yaml
+  12   38 samples/custom-bootstrap/.generated/custom-bootstrap.yaml
+  42   86 total

@@ -1,0 +1,10 @@
+$extends:
+- ../shared/bookinfo-service-base.yaml++
+metadata:
+  name: ratings
+  labels:
+    app: ratings
+    service: ratings
+spec:
+  selector:
+    app: ratings

@@ -1,0 +1,42 @@
+$extends:
+  - shared/otel-deployment-base.yaml++
+spec:
+  template:
+    spec:
+      containers:
+        - args:
+            - "--config=/conf/opentelemetry-collector-config.yaml"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          image: docker.io/otel/opentelemetry-collector-contrib:0.123.0
+          imagePullPolicy: IfNotPresent
+          name: opentelemetry-collector
+          ports:
+            - containerPort: 4317
+              protocol: TCP
+            - containerPort: 4318
+              protocol: TCP
+            - name: grpc-opencensus
+              containerPort: 55678
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: 200m
+              memory: 400Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - name: opentelemetry-collector-config-vol
+              mountPath: /conf

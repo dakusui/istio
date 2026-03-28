@@ -1,0 +1,28 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: bookinfo
+requires:
+  - configs: [ingress]
+deploy:
+  kubectl:
+    hooks:
+      before:
+        - host:
+            command:
+              - sh
+              - -c
+              - kubectl label namespace default istio-injection=enabled --overwrite
+            os:
+              - darwin
+              - linux
+        - host:
+            command:
+              - cmd.exe
+              - /C
+              - kubectl label namespace default istio-injection=enabled --overwrite
+            os:
+              - windows
+    manifests:
+      - ../../../samples/bookinfo/platform/kube/bookinfo.yaml
+      - ../../../samples/bookinfo/networking/bookinfo-gateway.yaml
+      - ../../../samples/bookinfo/networking/destination-rule-all.yaml

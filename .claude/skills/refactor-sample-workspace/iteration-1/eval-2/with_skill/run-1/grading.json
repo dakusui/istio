@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "generate_sh_exists_and_executable",
+      "passed": false,
+      "evidence": "File exists at samples/.refactored/curl/generate.sh but is not executable (mode -rw-rw-r--)"
+    },
+    {
+      "text": "generated_output_exists",
+      "passed": true,
+      "evidence": "samples/.generated/curl/curl.yaml exists"
+    },
+    {
+      "text": "semantic_equivalence",
+      "passed": true,
+      "evidence": "Semantic diff (yq -S, grep -v null) passes: PASS"
+    },
+    {
+      "text": "uses_extends_or_local",
+      "passed": true,
+      "evidence": "curl-serviceaccount.yaml++, curl-service.yaml++, curl-deployment.yaml++ all use $extends"
+    },
+    {
+      "text": "line_reduction",
+      "passed": true,
+      "evidence": "45 refactored lines vs 66 original lines (-32%)"
+    },
+    {
+      "text": "shared_base_referenced",
+      "passed": true,
+      "evidence": "All three yaml++ files reference files in ../shared/ (deployment-base, service-base, service-account-base)"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

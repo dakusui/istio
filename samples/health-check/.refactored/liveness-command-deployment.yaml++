@@ -1,0 +1,21 @@
+$extends:
+  - shared/deployment-base.yaml++
+metadata:
+  name: liveness
+spec:
+  template:
+    spec:
+      containers:
+      - name: "eval:string:refexpr(\".metadata.name\")"
+        image: registry.k8s.io/busybox
+        args:
+        - /bin/sh
+        - -c
+        - touch /tmp/healthy; sleep 3600
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/healthy
+          initialDelaySeconds: 5
+          periodSeconds: 5

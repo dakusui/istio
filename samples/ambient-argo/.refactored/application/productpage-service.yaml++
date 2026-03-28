@@ -1,0 +1,10 @@
+$extends:
+- ../shared/bookinfo-service-base.yaml++
+metadata:
+  name: productpage
+  labels:
+    app: productpage
+    service: productpage
+spec:
+  selector:
+    app: productpage

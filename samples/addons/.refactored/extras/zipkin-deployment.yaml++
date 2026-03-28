@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: istio-system
+  labels:
+    app: zipkin
+spec:
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: zipkin
+          image: docker.io/openzipkin/zipkin-slim:3.4.0
+          env:
+            - name: STORAGE_METHOD
+              value: "mem"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9411
+            initialDelaySeconds: 5
+            periodSeconds: 5

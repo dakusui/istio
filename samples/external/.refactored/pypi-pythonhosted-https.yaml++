@@ -1,0 +1,7 @@
+$extends:
+  - shared/service-entry-https-base.yaml++
+metadata:
+  name: pythonhosted-https
+spec:
+  hosts:
+  - files.pythonhosted.org

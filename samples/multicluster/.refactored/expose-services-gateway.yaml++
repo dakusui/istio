@@ -1,0 +1,14 @@
+$extends:
+  - shared/gateway-base.yaml++
+metadata:
+  name: cross-network-gateway
+spec:
+  servers:
+    - port:
+        number: 15443
+        name: tls
+        protocol: TLS
+      tls:
+        mode: AUTO_PASSTHROUGH
+      hosts:
+        - "*.local"

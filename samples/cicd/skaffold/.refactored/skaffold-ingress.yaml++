@@ -1,0 +1,25 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: ingress
+requires:
+  - configs: [istiod]
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    deploy:
+      helm:
+        releases:
+          - name: istio-ingressgateway
+            chartPath: ../../../manifests/charts/gateway
+            namespace: istio-system
+  - name: run
+    activation:
+      - command: run
+    deploy:
+      helm:
+        releases:
+          - name: istio-ingressgateway
+            remoteChart: gateway
+            repo: https://istio-release.storage.googleapis.com/charts
+            namespace: istio-system

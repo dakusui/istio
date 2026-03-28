@@ -1,0 +1,8 @@
+$extends:
+- ../shared/bookinfo-service-base.yaml++
+metadata:
+  name: reviews-v1
+spec:
+  selector:
+    app: reviews
+    version: v1

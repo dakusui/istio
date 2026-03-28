@@ -1,0 +1,71 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: istiod-gateway
+spec:
+  selector:
+    istio: eastwestgateway
+  servers:
+    - hosts:
+        - ISTIOD-HOST.DOMAIN
+      port:
+        name: https-istiod
+        number: 15012
+        protocol: https
+      tls:
+        credentialName: $CREDENTIAL_NAME
+        mode: SIMPLE
+    - hosts:
+        - ISTIOD-HOST.DOMAIN
+      port:
+        name: https-istiodwebhook
+        number: 15017
+        protocol: https
+      tls:
+        credentialName: $CREDENTIAL_NAME
+        mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: istiod-vs
+spec:
+  gateways:
+    - istiod-gateway
+  hosts:
+    - ISTIOD-HOST.DOMAIN
+  http:
+    - match:
+        - port: 15012
+      route:
+        - destination:
+            host: istiod.istio-system.svc.cluster.local
+            port:
+              number: 15012
+    - match:
+        - port: 15017
+      route:
+        - destination:
+            host: istiod.istio-system.svc.cluster.local
+            port:
+              number: 443
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: istiod-dr
+spec:
+  host: istiod.istio-system.svc.cluster.local
+  trafficPolicy:
+    portLevelSettings:
+      - connectionPool:
+          http:
+            h2UpgradePolicy: UPGRADE
+        port:
+          number: 15012
+        tls:
+          mode: SIMPLE
+      - port:
+          number: 443
+        tls:
+          mode: SIMPLE

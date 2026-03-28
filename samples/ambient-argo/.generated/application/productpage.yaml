@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: productpage
+    service: productpage
+  name: productpage
+spec:
+  ports:
+    - name: http
+      port: 9080
+  selector:
+    app: productpage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    account: productpage
+  name: bookinfo-productpage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productpage
+    version: v1
+  name: productpage-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productpage
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: '9080'
+        prometheus.io/scrape: 'true'
+      labels:
+        app: productpage
+        version: v1
+    spec:
+      containers:
+        - image: registry.istio.io/release/examples-bookinfo-productpage-v1:1.18.0
+          imagePullPolicy: IfNotPresent
+          name: productpage
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      serviceAccountName: bookinfo-productpage
+      volumes:
+        - emptyDir: {}
+          name: tmp

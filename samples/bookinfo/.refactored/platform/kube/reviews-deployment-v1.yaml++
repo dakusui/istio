@@ -1,0 +1,29 @@
+$extends:
+  - ../../shared/reviews-deployment-base.yaml++
+metadata:
+  name: reviews-v1
+  labels:
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      version: v1
+  template:
+    metadata:
+      labels:
+        version: v1
+    spec:
+      containers:
+      - name: reviews
+        image: registry.istio.io/release/examples-bookinfo-reviews-v1:1.20.3
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: LOG_DIR
+          value: "/tmp/logs"
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: wlp-output
+          mountPath: /opt/ibm/wlp/output

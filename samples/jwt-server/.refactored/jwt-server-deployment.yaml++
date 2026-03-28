@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jwt-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jwt-server
+  template:
+    metadata:
+      labels:
+        app: jwt-server
+    spec:
+      containers:
+      - image: registry.istio.io/testing/jwt-server:0.8
+        imagePullPolicy: IfNotPresent
+        name: jwt-server
+        volumeMounts:
+          - name: certkeysecretresource
+            mountPath: "/app/https/secretresources"
+            readOnly: true
+        args: ["-https", "8443", "-cert", "/app/https/secretresources/server.crt", "-key", "/app/https/secretresources/server.key"]
+        ports:
+        - containerPort: 8000
+        - containerPort: 8443
+      volumes:
+      - name: certkeysecretresource
+        secret:
+          secretName: jwt-cert-key-secret
+          defaultMode: 0400

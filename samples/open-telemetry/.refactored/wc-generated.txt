@@ -1,0 +1,6 @@
+ 116  277 samples/open-telemetry/.generated/otel.yaml
+ 101  205 samples/open-telemetry/.generated/loki/otel.yaml
+  15   25 samples/open-telemetry/.generated/loki/iop.yaml
+   9   16 samples/open-telemetry/.generated/loki/telemetry.yaml
+   9   16 samples/open-telemetry/.generated/tracing/telemetry.yaml
+ 250  539 total

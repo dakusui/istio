@@ -1,0 +1,14 @@
+$extends:
+  - shared/service-base.yaml++
+metadata:
+  name: helloworld
+  labels:
+    app: helloworld
+    service: helloworld
+spec:
+  ipFamilyPolicy: RequireDualStack
+  ipFamilies:
+  - IPv6
+  - IPv4
+  selector:
+    app: helloworld

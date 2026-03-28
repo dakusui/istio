@@ -1,0 +1,56 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+spec:
+  components:
+    ingressGateways:
+      - enabled: true
+        k8s:
+          overlays:
+            - apiVersion: apps/v1
+              kind: Deployment
+              name: istio-ingressgateway
+              patches:
+                - path: spec.template.spec.volumes.[name:workload-socket]
+                  value:
+                    csi:
+                      driver: csi.spiffe.io
+                      readOnly: true
+                    name: workload-socket
+                - path: spec.template.spec.containers.[name:istio-proxy].volumeMounts.[name:workload-socket]
+                  value:
+                    mountPath: /run/secrets/workload-spiffe-uds
+                    name: workload-socket
+                    readOnly: true
+                - path: spec.template.spec.initContainers
+                  value:
+                    - command:
+                        - sh
+                        - -c
+                        - "echo `date -Iseconds` Waiting for: ${CHECK_FILE}\nwhile\
+                          \ [[ ! -e ${CHECK_FILE} ]] ; do\n  echo `date -Iseconds`\
+                          \ File does not exist: ${CHECK_FILE}\n  sleep 15\ndone\n\
+                          ls -l ${CHECK_FILE}"
+                      env:
+                        - name: CHECK_FILE
+                          value: /run/secrets/workload-spiffe-uds/socket
+                      image: docker.io/library/busybox:1.28
+                      name: wait-for-spire-socket
+                      volumeMounts:
+                        - mountPath: /run/secrets/workload-spiffe-uds
+                          name: workload-socket
+                          readOnly: true
+        label:
+          istio: ingressgateway
+        name: istio-ingressgateway
+  meshConfig:
+    trustDomain: example.org
+  profile: default
+  values:
+    sidecarInjectorWebhook:
+      templates:
+        spire: "spec:\n  containers:\n  - name: istio-proxy\n    volumeMounts:\n \
+          \   - name: workload-socket\n      mountPath: /run/secrets/workload-spiffe-uds\n\
+          \      readOnly: true\n  volumes:\n    - name: workload-socket\n      csi:\n\
+          \        driver: \"csi.spiffe.io\"\n        readOnly: true\n"

@@ -1,0 +1,11 @@
+apiVersion: spire.spiffe.io/v1alpha1
+kind: ClusterFederatedTrustDomain
+metadata:
+  name: ${CLUSTER}
+spec:
+  bundleEndpointProfile:
+    endpointSPIFFEID: spiffe://${CLUSTER}.local/spire/server
+    type: https_spiffe
+  bundleEndpointURL: https://${BUNDLE_ENDPOINT}:8443
+  className: spire-spire
+  trustDomain: ${CLUSTER}.local

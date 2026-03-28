@@ -1,0 +1,328 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki
+  namespace: istio-system
+---
+apiVersion: v1
+data:
+  config.yaml: "\nauth_enabled: false\nbloom_build:\n  builder:\n    planner_address:\
+    \ \"\"\n  enabled: false\nbloom_gateway:\n  client:\n    addresses: \"\"\n  enabled:\
+    \ false\ncommon:\n  compactor_grpc_address: 'loki.istio-system.svc.cluster.local:9095'\n\
+    \  path_prefix: /var/loki\n  replication_factor: 1\n  storage:\n    filesystem:\n\
+    \      chunks_directory: /var/loki/chunks\n      rules_directory: /var/loki/rules\n\
+    frontend:\n  scheduler_address: \"\"\n  tail_proxy_url: \"\"\nfrontend_worker:\n\
+    \  scheduler_address: \"\"\nindex_gateway:\n  mode: simple\nlimits_config:\n \
+    \ max_cache_freshness_per_query: 10m\n  query_timeout: 300s\n  reject_old_samples:\
+    \ true\n  reject_old_samples_max_age: 168h\n  split_queries_by_interval: 15m\n\
+    \  volume_enabled: true\nmemberlist:\n  join_members:\n  - loki-memberlist.istio-system.svc.cluster.local\n\
+    pattern_ingester:\n  enabled: false\nquery_range:\n  align_queries_with_step:\
+    \ true\nruler:\n  storage:\n    type: local\n  wal:\n    dir: /var/loki/ruler-wal\n\
+    runtime_config:\n  file: /etc/loki/runtime-config/runtime-config.yaml\nschema_config:\n\
+    \  configs:\n  - from: \"2024-04-01\"\n    index:\n      period: 24h\n      prefix:\
+    \ index_\n    object_store: 'filesystem'\n    schema: v13\n    store: tsdb\nserver:\n\
+    \  grpc_listen_port: 9095\n  http_listen_port: 3100\n  http_server_read_timeout:\
+    \ 600s\n  http_server_write_timeout: 600s\nstorage_config:\n  bloom_shipper:\n\
+    \    working_directory: /var/loki/data/bloomshipper\n  boltdb_shipper:\n    index_gateway_client:\n\
+    \      server_address: \"\"\n  hedging:\n    at: 250ms\n    max_per_second: 20\n\
+    \    up_to: 3\n  tsdb_shipper:\n    index_gateway_client:\n      server_address:\
+    \ \"\"\n  use_thanos_objstore: false\ntracing:\n  enabled: false\n"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki
+  namespace: istio-system
+---
+apiVersion: v1
+data:
+  runtime-config.yaml: '{}
+
+    '
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki-runtime
+  namespace: istio-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki-clusterrole
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: loki-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: loki
+    namespace: istio-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: null
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki-memberlist
+  namespace: istio-system
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp
+      port: 7946
+      protocol: TCP
+      targetPort: http-memberlist
+  selector:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: memberlist
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: null
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+    prometheus.io/service-monitor: 'false'
+    variant: headless
+  name: loki-headless
+  namespace: istio-system
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: 3100
+      protocol: TCP
+      targetPort: http-metrics
+  selector:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: null
+  labels:
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki
+  namespace: istio-system
+spec:
+  ports:
+    - name: http-metrics
+      port: 3100
+      protocol: TCP
+      targetPort: http-metrics
+    - name: grpc
+      port: 9095
+      protocol: TCP
+      targetPort: grpc
+  selector:
+    app.kubernetes.io/component: single-binary
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: single-binary
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: memberlist
+    app.kubernetes.io/version: 3.6.5
+    helm.sh/chart: loki-6.53.0
+  name: loki
+  namespace: istio-system
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: single-binary
+      app.kubernetes.io/instance: loki
+      app.kubernetes.io/name: loki
+  serviceName: loki-headless
+  template:
+    metadata:
+      annotations:
+        checksum/config: 7beee9ce6dba8de1e670322d1f02ca6271acbff4e76efe12d443937c11f802f8
+        kubectl.kubernetes.io/default-container: loki
+        storage/size: 10Gi
+      labels:
+        app.kubernetes.io/component: single-binary
+        app.kubernetes.io/instance: loki
+        app.kubernetes.io/name: loki
+        app.kubernetes.io/part-of: memberlist
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: single-binary
+                  app.kubernetes.io/instance: loki
+                  app.kubernetes.io/name: loki
+              topologyKey: kubernetes.io/hostname
+      automountServiceAccountToken: true
+      containers:
+        - args:
+            - -config.file=/etc/loki/config/config.yaml
+            - -target=all
+          image: docker.io/grafana/loki:3.6.5
+          imagePullPolicy: IfNotPresent
+          name: loki
+          ports:
+            - containerPort: 3100
+              name: http-metrics
+              protocol: TCP
+            - containerPort: 9095
+              name: grpc
+              protocol: TCP
+            - containerPort: 7946
+              name: http-memberlist
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /etc/loki/config
+              name: config
+            - mountPath: /etc/loki/runtime-config
+              name: runtime-config
+            - mountPath: /var/loki
+              name: storage
+            - mountPath: /rules
+              name: sc-rules-volume
+        - env:
+            - name: METHOD
+              value: WATCH
+            - name: LABEL
+              value: loki_rule
+            - name: FOLDER
+              value: /rules
+            - name: RESOURCE
+              value: both
+            - name: WATCH_SERVER_TIMEOUT
+              value: '60'
+            - name: WATCH_CLIENT_TIMEOUT
+              value: '60'
+            - name: LOG_LEVEL
+              value: INFO
+          image: docker.io/kiwigrid/k8s-sidecar:1.30.9
+          imagePullPolicy: IfNotPresent
+          name: loki-sc-rules
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /rules
+              name: sc-rules-volume
+      enableServiceLinks: true
+      securityContext:
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+      serviceAccountName: loki
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: tmp
+        - configMap:
+            items:
+              - key: config.yaml
+                path: config.yaml
+            name: loki
+          name: config
+        - configMap:
+            name: loki-runtime
+          name: runtime-config
+        - emptyDir: {}
+          name: sc-rules-volume
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi

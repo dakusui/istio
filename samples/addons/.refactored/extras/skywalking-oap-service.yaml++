@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: skywalking-oap
+  name: skywalking-oap
+  namespace: istio-system
+spec:
+  ports:
+    - port: 11800
+      targetPort: 11800
+      name: grpc
+    - port: 12800
+      targetPort: 12800
+      name: http-query
+  selector:
+    app: skywalking-oap

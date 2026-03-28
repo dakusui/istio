@@ -1,0 +1,13 @@
+$extends:
+- ../shared/argocd-app-ambient-cluster-base.yaml++
+metadata:
+  name: istio-addons
+spec:
+  destination:
+    namespace: istio-system
+  source:
+    repoURL: 'https://github.com/istio/istio.git'
+    targetRevision: HEAD
+    path: samples/addons
+    directory:
+      exclude: loki.yaml

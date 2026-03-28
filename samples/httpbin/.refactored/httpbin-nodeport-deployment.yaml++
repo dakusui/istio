@@ -1,0 +1,2 @@
+$extends:
+  - shared/httpbin-deployment-base.yaml++
