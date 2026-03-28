@@ -1,4 +1,4 @@
-1$extends:
+$extends:
   - httproute-reviews-base.yaml++
 spec:
   rules:
