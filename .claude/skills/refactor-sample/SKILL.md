@@ -397,19 +397,4 @@ samples/{sample-name}/.refactored/generate.sh samples/{sample-name}/.generated
 
 ### 6. Produce the report
 
-Write the report to `samples/{sample-name}/.refactored/REFACTORING_REPORT.md`.
-
-**Metrics table:**
-
-| | Generated (baseline) | Refactored sources | of which: shared | Change |
-|---|---|---|---|---|
-| Lines | N | N | N | −N (−X%) |
-| Words | N | N | N | −N (−X%) |
-
-Use `.generated/` files as the baseline, not the originals. The originals may contain comments that are stripped during the jq++ → yq round-trip, which would make the refactored sources look better than they actually are. The generated files represent what the refactored sources produce after elaboration, so comparing against them gives a fair measure of how much the jq++ sources reduce repetition.
-
-Count `.yaml`/`.json` files under `.generated/` vs `.yaml++`/`.json++` files under `.refactored/` (exclude `generate.sh`). Use `wc -lw` for counts. The "of which: shared" column counts only files under `.refactored/shared/`.
-
-**Verification:** PASS or FAIL with details of any remaining diffs.
-
-**Findings (prose):** Describe what patterns were found and how jq++ addressed them. Include specific numbers where interesting (e.g., "Both Deployments were identical except for 3 fields — the version label, selector, and image tag — reducing 35 repetitive lines to a 6-line base and two 10-line variants"). Note any limitations (stripped comments, array merge behavior, etc.).
+Use the `/refactoring-report` skill to write `REFACTORING_REPORT.md`.
