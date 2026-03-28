@@ -1,53 +1,37 @@
 $extends:
   - destination-rule-base.yaml++
+  - subsets.jq
 _app: productpage
 spec:
   subsets:
-  - name: v1
-    labels:
-      version: v1
+  - "eval:object:subsets::versioned_subset(\"v1\")"
 ---
 $extends:
   - destination-rule-base.yaml++
+  - subsets.jq
 _app: reviews
 spec:
   subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v3
-    labels:
-      version: v3
+  - "eval:object:subsets::versioned_subset(\"v1\")"
+  - "eval:object:subsets::versioned_subset(\"v2\")"
+  - "eval:object:subsets::versioned_subset(\"v3\")"
 ---
 $extends:
   - destination-rule-base.yaml++
+  - subsets.jq
 _app: ratings
 spec:
   subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v2-mysql
-    labels:
-      version: v2-mysql
-  - name: v2-mysql-vm
-    labels:
-      version: v2-mysql-vm
+  - "eval:object:subsets::versioned_subset(\"v1\")"
+  - "eval:object:subsets::versioned_subset(\"v2\")"
+  - "eval:object:subsets::versioned_subset(\"v2-mysql\")"
+  - "eval:object:subsets::versioned_subset(\"v2-mysql-vm\")"
 ---
 $extends:
   - destination-rule-base.yaml++
+  - subsets.jq
 _app: details
 spec:
   subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
+  - "eval:object:subsets::versioned_subset(\"v1\")"
+  - "eval:object:subsets::versioned_subset(\"v2\")"
