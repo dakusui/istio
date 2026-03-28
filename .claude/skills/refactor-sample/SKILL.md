@@ -49,28 +49,27 @@ Useful for stripping private/internal annotations (e.g., `_comment`, `_internal`
 
 ### `yjoin [--out-dir OUT_DIR] [SRC_DIR]`
 
-Concatenates `{stem}@{id}.yaml[++]` part-files in `SRC_DIR` into `{stem}.yaml` in `OUT_DIR`.
+Batch-assembles all source files in `SRC_DIR` into `.yaml` files in `OUT_DIR`.
 
-- Files named `{stem}@{id}.yaml++` are rendered via `jq++ | yq -y '.'`
-- Files named `{stem}@{id}.yaml` are rendered via `yq -y '.'`
-- Files named `{name}.yaml++` (no `@`) are treated as single-doc passthrough
-- Files within each stem group are sorted lexicographically by identifier — use numeric prefixes (`01-`, `02-`, …) to control document order
+- Files named `{name}.yaml++` (no `@`) are elaborated via `yq++` — this is the primary pattern; multi-document files with `---` separators are handled correctly, with `$extends` working per-document
+- Files named `{stem}@{id}.yaml++` are rendered via `jq++ | yq -y '.'` and grouped by stem — retained for backward compatibility
+- Files named `{stem}@{id}.yaml` are rendered via `yq -y '.'` and grouped by stem
 
-Typical invocation from `.refactored/`:
+Typical invocation:
 ```bash
 SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
-"${SKILL_BIN}/yjoin" --out-dir ../.generated .
+"${SKILL_BIN}/yjoin" --out-dir "samples/{sample-name}/.generated" "samples/{sample-name}/.refactored"
 ```
 
 ### `ysplit [--out-dir OUT_DIR] FILE [FILE ...]`
 
-Splits a multi-document `.yaml` file into `{stem}@{NN}.yaml` parts (two-digit sequence, e.g. `@01`, `@02`). Each document is re-formatted through `yq -y '.'`. Output files go next to the input by default.
+Splits a multi-document `.yaml` file into `{stem}@{NN}.yaml` parts. Useful as a migration aid when starting a refactoring from an existing multi-document file — inspect the parts, then combine into a single `.yaml++` with `$extends` added where needed.
 
 ```bash
-"${SKILL_BIN}/ysplit" --out-dir .refactored/ samples/foo/foo.yaml
+"${SKILL_BIN}/ysplit" --out-dir /tmp/ samples/foo/foo.yaml
 ```
 
-These tools replace hand-written `generate.sh` assembly blocks. Use `yjoin` wherever a `generate.sh` would previously concatenate files.
+These tools replace hand-written `generate.sh` assembly blocks.
 
 ## Key jq++ Concepts
 
@@ -103,8 +102,7 @@ samples/
       shared/                 ← base files reused within this sample
         *.yaml++
         *.json++
-      {stem}@{NN}-{id}.yaml++ ← part-files (grouped by stem, ordered by NN)
-      {name}.yaml++           ← single-doc passthrough (no @)
+      {name}.yaml++           ← one file per output YAML; use --- to separate documents
       *.json++
       REFACTORING_REPORT.md   ← metrics, verification, findings
     .generated/               ← output of yjoin; mirrors original file layout
@@ -112,27 +110,21 @@ samples/
       *.json
 ```
 
-### File-naming convention for part-files
+### File-naming convention
 
-Multi-document YAML files are split into individual part-files using the `@` separator:
+One `.yaml++` file per output YAML file. Use `---` separators to include multiple documents:
 
 ```
-{stem}@{NN}-{description}.yaml++
+{name}.yaml++   →  {name}.yaml   (one or more documents)
 ```
-
-- **`stem`** — base name of the output file (may contain hyphens, e.g. `httpbin-gateway`)
-- **`@`** — unambiguous separator between stem and identifier
-- **`NN`** — zero-padded sequence number controlling concatenation order (`01`, `02`, …)
-- **`description`** — human-readable label (e.g. `serviceaccount`, `service`, `deployment-v1`)
 
 Examples:
 ```
-httpbin@01-serviceaccount.yaml++   →  httpbin.yaml  (doc 1)
-httpbin@02-service.yaml++          →  httpbin.yaml  (doc 2)
-httpbin@03-deployment.yaml++       →  httpbin.yaml  (doc 3)
-httpbin-gateway@01-gateway.yaml++  →  httpbin-gateway.yaml  (doc 1)
-httpbin-gateway@02-vs.yaml++       →  httpbin-gateway.yaml  (doc 2)
+httpbin.yaml++         →  httpbin.yaml         (ServiceAccount + Service + Deployment)
+httpbin-gateway.yaml++ →  httpbin-gateway.yaml  (Gateway + VirtualService)
 ```
+
+Each `---`-separated document in a `.yaml++` file is elaborated independently by `yq++`, so `$extends` works correctly per-document.
 
 ## Step-by-Step Workflow
 
@@ -142,7 +134,7 @@ Read all `.yaml` and `.json` files in `samples/{sample-name}/` recursively. For 
 
 - Record the Kubernetes `kind`, `apiVersion`, and key metadata
 - Identify repeated field groups (labels, selectors, resource requests, image prefixes, etc.)
-- Note multi-document YAML files (`---` separators) — each document becomes its own `.yaml++` file
+- Note multi-document YAML files (`---` separators) — the output `.yaml++` will use `---` to separate documents within a single file
 - Identify parametric variants (e.g., same Deployment shape for v1/v2/v3)
 
 ### 2. Design the refactored structure
@@ -157,21 +149,15 @@ A useful heuristic: if removing a repetition saves fewer than ~5 lines total, it
 
 ### 3. Create the jq++ source files
 
-**Splitting multi-document YAML files:**
-Each `---`-document gets its own `.yaml++` file using the `@` naming convention.
-Use `ysplit` to generate the initial split, then rename/refactor as needed:
+**One `.yaml++` per output file.** Use `---` to separate documents within it, exactly as in the original YAML. Each document is elaborated independently, so `$extends` works per-document.
+
+Use `ysplit` to generate a quick initial split if you want to inspect documents individually, then fold them back into a single `.yaml++`:
 
 ```bash
 SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
-"${SKILL_BIN}/ysplit" --out-dir .refactored/ samples/{sample-name}/file.yaml
-# produces: .refactored/file@01.yaml  .refactored/file@02.yaml  …
-# rename to add descriptions: file@01-serviceaccount.yaml++ etc.
+# Optional: inspect individual documents
+"${SKILL_BIN}/ysplit" --out-dir /tmp/ samples/{sample-name}/file.yaml
 ```
-
-Name part-files clearly with a numeric prefix and description:
-- `{sample}@01-serviceaccount.yaml++`
-- `{sample}@02-service.yaml++`
-- `{sample}@03-deployment-v1.yaml++`
 
 **Shared base files** (in `.refactored/shared/`):
 Provide the common structure. Only include fields that truly appear in all variants — do not add empty `{}` or `[]` placeholders for fields that some variants omit, as they will be inherited even when unwanted.

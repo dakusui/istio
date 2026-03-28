@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
-# yjoin — join {stem}@{id}.yaml[++] part-files in SRC_DIR into {stem}.yaml in OUT_DIR.
+# yjoin — assemble .yaml[++] source files in SRC_DIR into .yaml in OUT_DIR.
 #
 # Naming convention:
 #   {stem}@{id}.yaml++   → rendered via: jq++ file | yq -y '.'
 #   {stem}@{id}.yaml     → rendered via: yq -y '.' file
-#   {name}.yaml++        → single-doc passthrough (no grouping)
+#   {name}.yaml++        → multi-doc passthrough via yq++ (handles --- separators)
+#   {name}.yaml          → single-doc passthrough via yq -y '.'
 #
-# Files within each stem are sorted lexicographically by identifier, so numeric
-# prefixes (01-, 02-, …) are recommended for deterministic ordering.
+# The preferred authoring pattern is a single {name}.yaml++ per output file,
+# using --- to separate documents. yq++ elaborates each document independently
+# so $extends works correctly across documents.
+#
+# The {stem}@{id} part-file pattern is retained for backward compatibility and
+# for cases where separate files are preferred (e.g. very large samples).
+# Files within each stem are sorted lexicographically by identifier.
+#
 #
 # Usage:
 #   yjoin [--out-dir OUT_DIR] [SRC_DIR]
@@ -81,11 +88,14 @@ for stem in "${!stem_files[@]}"; do
   echo "Generated: ${out}"
 done
 
-# ── single-doc passthrough: {name}.yaml++ (no @) ────────────────────────────
+SKILL_BIN="$(cd "$(dirname "$0")" && pwd)"
+
+# ── multi-doc passthrough: {name}.yaml++ (no @) ─────────────────────────────
+# Use yq++ so that --- separators and per-document $extends both work.
 while IFS= read -r f; do
   [[ -z "${f}" ]] && continue
   name="$(strip_ext "$(basename "${f}")")"
   out="${OUT_DIR}/${name}.yaml"
-  render "${f}" > "${out}"
+  "${SKILL_BIN}/yq++" "${f}" > "${out}"
   echo "Generated: ${out}"
 done < <(find "${SRC_DIR}" -maxdepth 1 -name "*.yaml++" ! -name "*@*" | sort)
