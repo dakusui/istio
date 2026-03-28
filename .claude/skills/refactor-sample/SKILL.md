@@ -243,6 +243,30 @@ metadata:
     version: "eval:string:refexpr(\".version\")"
 ```
 
+**Private `_`-prefixed value holders:**
+`ystrip` removes all `_`-prefixed keys from the output, so you can define values under `_`-prefixed keys as private anchors and reference them with `eval:`. This is useful when a value is scattered across one document — defining it once in a `_`-prefixed key makes the document structurally uniform without polluting the output:
+
+```yaml
+# The Helm repo URL appears in both the dev and run profiles.
+# Define it once; reference it everywhere.
+_repo: https://istio-release.storage.googleapis.com/charts
+profiles:
+  - name: dev
+    deploy:
+      helm:
+        releases:
+          - remoteChart: istiod
+            repo: "eval:string:refexpr(\"._repo\")"
+  - name: run
+    deploy:
+      helm:
+        releases:
+          - remoteChart: istiod
+            repo: "eval:string:refexpr(\"._repo\")"
+```
+
+This technique also makes variant documents more structurally similar — two documents that differ only in a few scattered values can share a common base if those values are first pulled up into `_`-prefixed holders at the top.
+
 **Important caveat — array merging:** jq++ deep-merges objects but shallow-replaces arrays. A child's `containers: [...]` fully replaces the base's `containers: []`. Design base arrays accordingly (usually empty `[]` as placeholder).
 
 **Comments:** YAML comments are stripped during jq++ → yq round-trip. If the original has significant comments, note this in the report.
