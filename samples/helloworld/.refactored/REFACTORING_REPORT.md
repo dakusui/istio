@@ -2,12 +2,14 @@
 
 ## Metrics
 
-| | Original | Refactored sources | of which: shared | Change |
+| | Generated (baseline) | Refactored sources | of which: shared | Change |
 |---|---|---|---|---|
 | Lines | 250 | 195 | 56 | −55 (−22%) |
-| Words | 422 | 328 | 90 | −94 (−22%) |
+| Words | 413 | 328 | 90 | −85 (−21%) |
 
-Original files counted: `helloworld.yaml`, `helloworld-gateway.yaml`, `helloworld-dual-stack.yaml`,
+Baseline is `.generated/` (not the originals), since the originals contain inline comments (e.g., `#Always`)
+that are stripped during the jq++ → yq round-trip and would inflate the apparent savings.
+Files counted: `helloworld.yaml`, `helloworld-gateway.yaml`, `helloworld-dual-stack.yaml`,
 `gateway-api/helloworld-gateway.yaml`, `gateway-api/helloworld-route.yaml`, `gateway-api/helloworld-versions.yaml`
 
 ## Verification

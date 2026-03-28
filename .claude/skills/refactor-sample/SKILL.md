@@ -303,12 +303,14 @@ Write the report to `samples/{sample-name}/.refactored/REFACTORING_REPORT.md`.
 
 **Metrics table:**
 
-| | Original | Refactored sources | of which: shared | Change |
+| | Generated (baseline) | Refactored sources | of which: shared | Change |
 |---|---|---|---|---|
 | Lines | N | N | N | −N (−X%) |
 | Words | N | N | N | −N (−X%) |
 
-Count only `.yaml`/`.json` originals vs `.yaml++`/`.json++` refactored sources (exclude `generate.sh` from the word/line counts). Use `wc -lw` for counts. The "of which: shared" column counts only files under `.refactored/shared/`.
+Use `.generated/` files as the baseline, not the originals. The originals may contain comments that are stripped during the jq++ → yq round-trip, which would make the refactored sources look better than they actually are. The generated files represent what the refactored sources produce after elaboration, so comparing against them gives a fair measure of how much the jq++ sources reduce repetition.
+
+Count `.yaml`/`.json` files under `.generated/` vs `.yaml++`/`.json++` files under `.refactored/` (exclude `generate.sh`). Use `wc -lw` for counts. The "of which: shared" column counts only files under `.refactored/shared/`.
 
 **Verification:** PASS or FAIL with details of any remaining diffs.
 
