@@ -1,0 +1,44 @@
+_app: liveness-http
+_port: 8001
+apiVersion: v1
+kind: Service
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+  labels:
+    app: "eval:string:refexpr(\"._app\")"
+    service: "eval:string:refexpr(\"._app\")"
+spec:
+  ports:
+    - name: http
+      port: "eval:number:refexpr(\"._port\")"
+  selector:
+    app: "eval:string:refexpr(\"._app\")"
+---
+_app: liveness-http
+_port: 8001
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+spec:
+  selector:
+    matchLabels:
+      app: "eval:string:refexpr(\"._app\")"
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: "eval:string:refexpr(\"._app\")"
+        version: v1
+    spec:
+      containers:
+        - name: "eval:string:refexpr(\"._app\")"
+          image: registry.istio.io/release/health:example
+          ports:
+            - containerPort: "eval:number:refexpr(\"._port\")"
+          livenessProbe:
+            httpGet:
+              path: /foo
+              port: "eval:number:refexpr(\"._port\")"
+            initialDelaySeconds: 5
+            periodSeconds: 5

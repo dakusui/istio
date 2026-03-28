@@ -1,0 +1,43 @@
+_app: liveness
+apiVersion: v1
+kind: Service
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+  labels:
+    app: "eval:string:refexpr(\"._app\")"
+    service: "eval:string:refexpr(\"._app\")"
+spec:
+  ports:
+    - port: 80
+      name: http
+  selector:
+    app: "eval:string:refexpr(\"._app\")"
+---
+_app: liveness
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+spec:
+  selector:
+    matchLabels:
+      app: "eval:string:refexpr(\"._app\")"
+  template:
+    metadata:
+      labels:
+        app: "eval:string:refexpr(\"._app\")"
+    spec:
+      containers:
+        - name: "eval:string:refexpr(\"._app\")"
+          image: registry.k8s.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - touch /tmp/healthy; sleep 3600
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 5
+            periodSeconds: 5
