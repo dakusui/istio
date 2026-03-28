@@ -244,11 +244,13 @@ metadata:
 ```
 
 **Private `_`-prefixed value holders:**
-`ystrip` removes all `_`-prefixed keys from the output, so you can define values under `_`-prefixed keys as private anchors and reference them with `eval:`. This is useful when a value is scattered across one document — defining it once in a `_`-prefixed key makes the document structurally uniform without polluting the output:
+`ystrip` removes all `_`-prefixed keys from the output, so you can define values under `_`-prefixed keys as private anchors and reference them with `eval:`. This is useful when a value is scattered across one document — defining it once in a `_`-prefixed key makes the document structurally uniform without polluting the output.
+
+At the document level, use `refexpr` to reference a top-level `_` holder:
 
 ```yaml
-# The Helm repo URL appears in both the dev and run profiles.
-# Define it once; reference it everywhere.
+# The Helm repo URL appears in both profiles.
+# Define it once at the top; reference it from each profile.
 _repo: https://istio-release.storage.googleapis.com/charts
 profiles:
   - name: dev
@@ -265,7 +267,36 @@ profiles:
             repo: "eval:string:refexpr(\"._repo\")"
 ```
 
-This technique also makes variant documents more structurally similar — two documents that differ only in a few scattered values can share a common base if those values are first pulled up into `_`-prefixed holders at the top.
+**Revealing structural similarity in nested objects with `reftag`:**
+When varying values are embedded inside nested objects (e.g., array items), define `_`-prefixed holders *within* each item and reference them with `reftag(name)`, which searches upward through ancestor objects for the nearest matching key. This often reveals that two items which looked different are actually structurally identical:
+
+```yaml
+profiles:
+  - _chart: istiod
+    _ns: istio-system
+    name: run
+    activation:
+      - command: run
+    deploy:
+      helm:
+        releases:
+          - remoteChart: "eval:string:reftag(\"_chart\")"
+            namespace: "eval:string:reftag(\"_ns\")"
+  - _chart: istio-ingressgateway
+    _ns: istio-system
+    name: run
+    activation:
+      - command: run
+    deploy:
+      helm:
+        releases:
+          - remoteChart: "eval:string:reftag(\"_chart\")"
+            namespace: "eval:string:reftag(\"_ns\")"
+```
+
+Both items now have identical non-`_` structure — making them candidates for a shared `$extends` base where only `_chart` and `_ns` are overridden. The `$cur` (current path as array) and `$curexpr` (current path as string, e.g. `.profiles[0]`) built-ins are available when you need to construct sibling paths manually, but `reftag` is usually the simpler choice for this pattern.
+
+See the [jq++ builtins reference](https://dakusui.github.io/jqplusplus/reference/builtins.html) for full documentation on `$cur`, `$curexpr`, `reftag`, `ref`, `refexpr`, and `parent`.
 
 **Important caveat — array merging:** jq++ deep-merges objects but shallow-replaces arrays. A child's `containers: [...]` fully replaces the base's `containers: []`. Design base arrays accordingly (usually empty `[]` as placeholder).
 
