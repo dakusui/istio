@@ -1,0 +1,4 @@
+$extends:
+  - reviews-deployment-base.yaml++
+_app: reviews
+_version: v2

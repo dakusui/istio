@@ -1,11 +1,10 @@
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: istio-base
 profiles:
-  - name: dev
-    activation:
-      - command: dev
+  - $extends:
+      - profiles-dev-base.yaml++
     deploy:
       helm:
         releases:
@@ -14,7 +13,7 @@ profiles:
             namespace: istio-system
             createNamespace: true
   - $extends:
-      - shared/profile-run-base.yaml++
+      - profile-run-base.yaml++
     deploy:
       helm:
         releases:
@@ -32,9 +31,8 @@ requires:
   - configs:
       - istio-base
 profiles:
-  - name: dev
-    activation:
-      - command: dev
+  - $extends:
+      - profiles-dev-base.yaml++
     deploy:
       helm:
         releases:
@@ -42,7 +40,7 @@ profiles:
             chartPath: ../../../manifests/charts/istio-control/istio-discovery
             namespace: istio-system
   - $extends:
-      - shared/profile-run-base.yaml++
+      - profile-run-base.yaml++
     deploy:
       helm:
         releases:
@@ -52,16 +50,15 @@ profiles:
             namespace: istio-system
 ---
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: ingress
 requires:
   - configs:
       - istiod
 profiles:
-  - name: dev
-    activation:
-      - command: dev
+  - $extends:
+      - profiles-dev-base.yaml++
     deploy:
       helm:
         releases:
@@ -69,7 +66,7 @@ profiles:
             chartPath: ../../../manifests/charts/gateway
             namespace: istio-system
   - $extends:
-      - shared/profile-run-base.yaml++
+      - profile-run-base.yaml++
     deploy:
       helm:
         releases:
@@ -79,7 +76,7 @@ profiles:
             namespace: istio-system
 ---
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: prometheus
 requires:
@@ -91,7 +88,7 @@ deploy:
       - ../../../samples/addons/prometheus.yaml
 ---
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: kiali
 requires:

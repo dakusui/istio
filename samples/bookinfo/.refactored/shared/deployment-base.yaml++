@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "eval:string:refexpr(\"._app\") + \"-\" + refexpr(\"._version\")"
+  labels:
+    app: "eval:string:refexpr(\"._app\")"
+    version: "eval:string:refexpr(\"._version\")"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "eval:string:refexpr(\"._app\")"
+      version: "eval:string:refexpr(\"._version\")"
+  template:
+    metadata:
+      labels:
+        app: "eval:string:refexpr(\"._app\")"
+        version: "eval:string:refexpr(\"._version\")"
+    spec:
+      containers: []

@@ -1,0 +1,16 @@
+$extends:
+  - simple-deployment-base.yaml++
+_app: details
+_version: v2
+spec:
+  template:
+    spec:
+      containers:
+      - name: "eval:string:refexpr(\"._app\")"
+        image: "eval:string:\"registry.istio.io/release/examples-bookinfo-\" + refexpr(\"._app\") + \"-\" + refexpr(\"._version\") + \":1.20.3\""
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        env:
+        - name: DO_NOT_ENCRYPT
+          value: "true"

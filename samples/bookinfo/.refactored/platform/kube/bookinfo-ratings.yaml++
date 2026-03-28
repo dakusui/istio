@@ -1,0 +1,8 @@
+$extends:
+  - service-base.yaml++
+_app: ratings
+---
+$extends:
+  - simple-deployment-base.yaml++
+_app: ratings
+_version: v1

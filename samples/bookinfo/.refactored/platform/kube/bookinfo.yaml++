@@ -1,0 +1,102 @@
+$extends:
+  - service-base.yaml++
+_app: details
+---
+$extends:
+  - service-account-base.yaml++
+_app: details
+---
+$extends:
+  - simple-deployment-base.yaml++
+_app: details
+_version: v1
+spec:
+  template:
+    spec:
+      serviceAccountName: bookinfo-details
+---
+$extends:
+  - service-base.yaml++
+_app: ratings
+---
+$extends:
+  - service-account-base.yaml++
+_app: ratings
+---
+$extends:
+  - simple-deployment-base.yaml++
+_app: ratings
+_version: v1
+spec:
+  template:
+    spec:
+      serviceAccountName: bookinfo-ratings
+---
+$extends:
+  - service-base.yaml++
+_app: reviews
+---
+$extends:
+  - service-account-base.yaml++
+_app: reviews
+---
+$extends:
+  - reviews-deployment-base.yaml++
+_app: reviews
+_version: v1
+spec:
+  template:
+    spec:
+      serviceAccountName: bookinfo-reviews
+---
+$extends:
+  - reviews-deployment-base.yaml++
+_app: reviews
+_version: v2
+spec:
+  template:
+    spec:
+      serviceAccountName: bookinfo-reviews
+---
+$extends:
+  - reviews-deployment-base.yaml++
+_app: reviews
+_version: v3
+spec:
+  template:
+    spec:
+      serviceAccountName: bookinfo-reviews
+---
+$extends:
+  - service-base.yaml++
+_app: productpage
+---
+$extends:
+  - service-account-base.yaml++
+_app: productpage
+---
+$extends:
+  - deployment-base.yaml++
+_app: productpage
+_version: v1
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9080"
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: bookinfo-productpage
+      containers:
+      - name: productpage
+        image: registry.istio.io/release/examples-bookinfo-productpage-v1:1.20.3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
