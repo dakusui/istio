@@ -1,12 +1,12 @@
 $extends:
-  - funcs.jq
+  - httproute.jq
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: "eval:string:refexpr(\"._svc\")"
 spec:
   parentRefs:
-    - "eval:object:funcs::parentRef(reftag(\"_svc\"); 9080)"
+    - "eval:object:httproute::parentRef(reftag(\"_svc\"); 9080)"
   rules:
     - backendRefs:
-        - "eval:object:funcs::backendRef(\"v1\"; 9080)"
+        - "eval:object:httproute::backendRef(\"v1\"; 9080)"

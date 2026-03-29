@@ -3,5 +3,5 @@ $extends:
 spec:
   rules:
     - backendRefs:
-        - "eval:object:funcs::backendRef(\"v1\"; 9080; 90)"
-        - "eval:object:funcs::backendRef(\"v2\"; 9080; 10)"
+        - "eval:object:httproute::backendRef(\"v1\"; 9080; 90)"
+        - "eval:object:httproute::backendRef(\"v2\"; 9080; 10)"
