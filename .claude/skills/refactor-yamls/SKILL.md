@@ -27,7 +27,7 @@ If any are missing, stop and tell the user.
 
 ## Skill Utilities
 
-Three scripts are provided under `.claude/skills/refactor-sample/bin/` and should be invoked with their full path (or add the directory to PATH):
+Three scripts are provided under `.claude/skills/refactor-yamls/bin/` and should be invoked with their full path (or add the directory to PATH):
 
 ### `yq++ FILE`
 
@@ -57,7 +57,7 @@ Batch-assembles all source files in `SRC_DIR` into `.yaml` files in `OUT_DIR`.
 - Files named `{stem}@{id}.yaml` are rendered via `yq -y '.'` and grouped by stem
 
 ```bash
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-yamls/bin"
 "${SKILL_BIN}/yjoin" --out-dir "${TARGET_DIR}/.refactoring/sandbox" "${TARGET_DIR}/.refactoring/refactored"
 ```
 
@@ -151,7 +151,7 @@ When neither applies â€” the repetition is small *and* a name adds no clarity â€
 Use `ysplit` to generate a quick initial split for inspection:
 
 ```bash
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-sample/bin"
+SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-yamls/bin"
 "${SKILL_BIN}/ysplit" --out-dir /tmp/ "{TARGET_DIR}/file.yaml"
 ```
 
