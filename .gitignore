@@ -67,3 +67,6 @@ coverage.out
 /cni/pkg/plugin/istio-cni.log
 .wiki
 artifacts
+
+# sandbox folder should be ignored.
+.refactoring/sandbox
