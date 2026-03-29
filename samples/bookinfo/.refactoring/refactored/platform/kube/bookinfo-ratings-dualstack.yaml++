@@ -1,5 +1,6 @@
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: ratings
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -8,6 +9,7 @@ spec:
   - IPv4
 ---
 $extends:
-  - simple-deployment-base.yaml++
+  - bookinfo.jq
+  - simple/deployment-base.yaml++
 _app: ratings
 _version: v1

@@ -1,4 +1,0 @@
-spec:
-  template:
-    spec:
-      serviceAccountName: "eval:string:\"bookinfo-\" + refexpr(\"._app\")"

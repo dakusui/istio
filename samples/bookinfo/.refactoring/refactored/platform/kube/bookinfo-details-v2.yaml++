@@ -1,5 +1,6 @@
 $extends:
-  - simple-deployment-base.yaml++
+  - bookinfo.jq
+  - simple/deployment-base.yaml++
 _app: details
 _version: v2
 spec:

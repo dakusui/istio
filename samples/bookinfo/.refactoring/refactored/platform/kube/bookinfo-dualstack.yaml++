@@ -1,5 +1,6 @@
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: details
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -8,17 +9,20 @@ spec:
   - IPv4
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: details
 ---
 $extends:
-  - simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - simple/deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: details
 _version: v1
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: ratings
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -27,17 +31,20 @@ spec:
   - IPv4
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: ratings
 ---
 $extends:
-  - simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - simple/deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: ratings
 _version: v1
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: reviews
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -46,29 +53,34 @@ spec:
   - IPv6
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: reviews
 ---
 $extends:
-  - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v1
 ---
 $extends:
-  - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v2
 ---
 $extends:
-  - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v3
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: productpage
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -77,12 +89,14 @@ spec:
   - IPv6
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: productpage
 ---
 $extends:
-  - deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - base/deployment.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: productpage
 _version: v1
 spec:

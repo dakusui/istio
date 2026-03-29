@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "eval:string:refexpr(\"._app\") + \"-\" + refexpr(\"._version\")"
+  name: "eval:string:bookinfo::app_version(refexpr(\"._app\"); refexpr(\"._version\"))"
   labels:
     app: "eval:string:refexpr(\"._app\")"
     version: "eval:string:refexpr(\"._version\")"

@@ -1,68 +1,82 @@
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: details
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: details
 ---
 $extends:
-  - psa-simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - simple/psa-deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: details
 _version: v1
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: ratings
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: ratings
 ---
 $extends:
-  - psa-simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - simple/psa-deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: ratings
 _version: v1
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: reviews
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: reviews
 ---
 $extends:
-  - psa-reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/psa-deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v1
 ---
 $extends:
-  - psa-reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/psa-deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v2
 ---
 $extends:
-  - psa-reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - reviews/psa-deployment-base.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: reviews
 _version: v3
 ---
 $extends:
-  - service-base.yaml++
+  - bookinfo.jq
+  - base/service.yaml++
 _app: productpage
 ---
 $extends:
-  - service-account-base.yaml++
+  - bookinfo.jq
+  - base/service-account.yaml++
 _app: productpage
 ---
 $extends:
-  - deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo.jq
+  - base/deployment.yaml++
+  - bookinfo/service-account-base.yaml++
 _app: productpage
 _version: v1
 spec:

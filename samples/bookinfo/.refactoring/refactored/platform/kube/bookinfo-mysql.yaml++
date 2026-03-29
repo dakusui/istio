@@ -21,7 +21,8 @@ spec:
     app: mysqldb
 ---
 $extends:
-  - deployment-base.yaml++
+  - bookinfo.jq
+  - base/deployment.yaml++
 _app: mysqldb
 _version: v1
 spec:

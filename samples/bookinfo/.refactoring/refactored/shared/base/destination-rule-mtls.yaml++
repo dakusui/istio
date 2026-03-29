@@ -1,5 +1,5 @@
 $extends:
-  - destination-rule-base.yaml++
+  - base/destination-rule.yaml++
 spec:
   trafficPolicy:
     tls:
