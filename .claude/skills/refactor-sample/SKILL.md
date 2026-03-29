@@ -349,130 +349,29 @@ The `eval:object:` type causes jq++ to replace the string with the returned obje
 
 ### 4. Create generate.sh and generate output
 
-Create `samples/{sample-name}/.refactoring/refactored/generate.sh` using this template:
+Copy `generate.sh` from the skill templates and make it executable:
 
 ```bash
-#!/usr/bin/env bash
-# Usage:
-#   generate.sh [OUT_DIR]
-#
-# Assembles .refactoring/refactored/ sources into OUT_DIR (default: .refactoring/sandbox).
-# _-prefixed keys (private jq++ variables) are stripped from all output files.
-#
-# Typical workflow:
-#   generate.sh                                 # build into .refactoring/sandbox (default)
-#   diff -r ../.refactoring/sandbox ../.refactoring/generated
-#   generate.sh ../.refactoring/generated       # promote to .refactoring/generated when satisfied
-
-set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
-SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
-export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
-
-# ── assemble ──────────────────────────────────────────────────────────────────
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactoring/refactored"
-# Add one line per subdirectory, e.g.:
-# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api" "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
-
-# ── strip private _-prefixed keys ─────────────────────────────────────────────
-while IFS= read -r f; do
-  tmp="$(mktemp)"
-  "${SKILL_BIN}/ystrip" "${f}" > "${tmp}"
-  mv "${tmp}" "${f}"
-done < <(find "${OUT_DIR}" -name "*.yaml" | sort)
+cp "${REPO_ROOT}/.claude/skills/refactor-sample/templates/generate.sh" \
+   "samples/{sample-name}/.refactoring/refactored/generate.sh"
+chmod +x "samples/{sample-name}/.refactoring/refactored/generate.sh"
 ```
 
-Adjust the `yjoin` lines to match the sample's subdirectory structure. Make it executable:
-
-```bash
-chmod +x samples/{sample-name}/.refactoring/refactored/generate.sh
-```
+Then **edit the `# ── assemble ──` section** to match the sample's subdirectory structure — adjust the `yjoin` lines and add `mkdir -p` for any output subdirectories.
 
 JSON files (`.json++`) still require explicit processing — `yjoin` handles `.yaml[++]` only. Add them to the assemble section of `generate.sh`:
 ```bash
 jq++ "${SAMPLE_DIR}/.refactoring/refactored/config.json++" | jq . > "${OUT_DIR}/config.json"
 ```
 
-Also create `samples/{sample-name}/.refactoring/refactored/verify.sh` using this template:
+Copy `verify.sh` from the skill templates — no edits needed, it is sample-agnostic:
 
 ```bash
-#!/usr/bin/env bash
-# Usage:
-#   verify.sh [DIR_A [DIR_B]]
-#
-# Checks semantic equivalence between DIR_A and DIR_B.
-# Defaults: DIR_A=.refactoring/generated  DIR_B=.refactoring/sandbox
-#
-# YAML files are compared via: yq -S '.'  (key-sorted, null-filtered)
-# JSON files are compared via: jq -S .
-#
-# Exits 0 if all files match, non-zero if any differ.
-
-set -euo pipefail
-SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
-DIR_A="${1:-${SAMPLE_DIR}/.refactoring/generated}"
-DIR_B="${2:-${SAMPLE_DIR}/.refactoring/sandbox}"
-
-pass=0
-fail=0
-
-check_yaml() {
-  local fa="$1" fb="$2" rel="$3"
-  local out
-  if out=$(diff \
-      <(yq -S '.' "${fa}" | grep -v '^null$') \
-      <(yq -S '.' "${fb}" | grep -v '^null$') 2>&1); then
-    echo "OK:   ${rel}"
-    pass=$((pass + 1))
-  else
-    echo "FAIL: ${rel}"
-    echo "${out}" | sed 's/^/      /'
-    fail=$((fail + 1))
-  fi
-}
-
-check_json() {
-  local fa="$1" fb="$2" rel="$3"
-  local out
-  if out=$(diff <(jq -S . "${fa}") <(jq -S . "${fb}") 2>&1); then
-    echo "OK:   ${rel}"
-    pass=$((pass + 1))
-  else
-    echo "FAIL: ${rel}"
-    echo "${out}" | sed 's/^/      /'
-    fail=$((fail + 1))
-  fi
-}
-
-while IFS= read -r fa; do
-  rel="${fa#${DIR_A}/}"
-  fb="${DIR_B}/${rel}"
-  if [[ ! -f "${fb}" ]]; then
-    echo "MISS: ${rel}  (absent in ${DIR_B})"
-    fail=$((fail + 1))
-    continue
-  fi
-  case "${fa}" in
-    *.yaml) check_yaml "${fa}" "${fb}" "${rel}" ;;
-    *.json) check_json "${fa}" "${fb}" "${rel}" ;;
-  esac
-done < <(find "${DIR_A}" \( -name "*.yaml" -o -name "*.json" \) | sort)
-
-echo ""
-if [[ ${fail} -eq 0 ]]; then
-  echo "PASS  ${pass}/${pass} files match"
-else
-  echo "FAIL  ${pass} passed, ${fail} failed"
-fi
-
-[[ ${fail} -eq 0 ]]
-```
-
-Make it executable:
-```bash
-chmod +x samples/{sample-name}/.refactoring/refactored/verify.sh
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cp "${REPO_ROOT}/.claude/skills/refactor-sample/templates/verify.sh" \
+   "samples/{sample-name}/.refactoring/refactored/verify.sh"
+chmod +x "samples/{sample-name}/.refactoring/refactored/verify.sh"
 ```
 
 ### 5. Run and verify
