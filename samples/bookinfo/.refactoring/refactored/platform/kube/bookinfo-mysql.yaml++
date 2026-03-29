@@ -22,7 +22,7 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - base-deployment.yaml++
+  - base/deployment.yaml++
 _app: mysqldb
 _version: v1
 spec:

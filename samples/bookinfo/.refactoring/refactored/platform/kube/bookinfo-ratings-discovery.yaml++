@@ -1,4 +1,4 @@
 $extends:
   - bookinfo.jq
-  - base-service.yaml++
+  - base/service.yaml++
 _app: ratings

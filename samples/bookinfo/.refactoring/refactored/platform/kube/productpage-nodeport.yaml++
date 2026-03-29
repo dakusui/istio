@@ -1,6 +1,6 @@
 $extends:
   - bookinfo.jq
-  - base-service.yaml++
+  - base/service.yaml++
 _app: productpage
 spec:
   type: NodePort

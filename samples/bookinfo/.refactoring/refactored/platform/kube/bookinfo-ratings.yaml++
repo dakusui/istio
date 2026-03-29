@@ -1,10 +1,10 @@
 $extends:
   - bookinfo.jq
-  - base-service.yaml++
+  - base/service.yaml++
 _app: ratings
 ---
 $extends:
   - bookinfo.jq
-  - simple-deployment-base.yaml++
+  - simple/deployment-base.yaml++
 _app: ratings
 _version: v1

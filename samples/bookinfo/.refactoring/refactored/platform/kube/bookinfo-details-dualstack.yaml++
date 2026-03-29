@@ -1,6 +1,6 @@
 $extends:
   - bookinfo.jq
-  - base-service.yaml++
+  - base/service.yaml++
 _app: details
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -10,6 +10,6 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - simple-deployment-base.yaml++
+  - simple/deployment-base.yaml++
 _app: details
 _version: v1
