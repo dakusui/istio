@@ -1,0 +1,4 @@
+$extends:
+  - ratings-v2-mysql-deployment-base.yaml++
+_version: v2-mysql-vm
+_mysql_host: mysqldb.vm.svc.cluster.local

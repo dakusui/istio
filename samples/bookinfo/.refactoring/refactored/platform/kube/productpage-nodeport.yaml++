@@ -1,0 +1,5 @@
+$extends:
+  - service-base.yaml++
+_app: productpage
+spec:
+  type: NodePort

@@ -1,0 +1,7 @@
+  71  114 samples/helloworld/.generated/helloworld.yaml
+  19   36 samples/helloworld/.generated/gateway-api/helloworld-route.yaml
+  23   39 samples/helloworld/.generated/gateway-api/helloworld-versions.yaml
+  29   50 samples/helloworld/.generated/gateway-api/helloworld-gateway.yaml
+  75  121 samples/helloworld/.generated/helloworld-dual-stack.yaml
+  33   53 samples/helloworld/.generated/helloworld-gateway.yaml
+ 250  413 total

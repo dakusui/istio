@@ -1,0 +1,4 @@
+$extends:
+  - ratings-v2-mysql-deployment-base.yaml++
+_version: v2-mysql
+_mysql_host: mysqldb

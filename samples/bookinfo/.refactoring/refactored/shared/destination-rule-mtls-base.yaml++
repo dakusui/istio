@@ -1,0 +1,6 @@
+$extends:
+  - destination-rule-base.yaml++
+spec:
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

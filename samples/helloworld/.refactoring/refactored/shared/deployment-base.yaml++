@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "eval:string:\"helloworld-\" + refexpr(\"._version\")"
+  labels:
+    app: helloworld
+    version: "eval:string:refexpr(\"._version\")"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+      version: "eval:string:refexpr(\"._version\")"
+  template:
+    metadata:
+      labels:
+        app: helloworld
+        version: "eval:string:refexpr(\"._version\")"
+    spec:
+      containers:
+        - name: helloworld
+          image: "eval:string:\"registry.istio.io/release/examples-helloworld-\" + refexpr(\"._version\") + \":1.0\""
+          resources:
+            requests:
+              cpu: "100m"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000

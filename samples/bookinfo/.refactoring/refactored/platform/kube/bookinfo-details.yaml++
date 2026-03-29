@@ -1,0 +1,8 @@
+$extends:
+  - service-base.yaml++
+_app: details
+---
+$extends:
+  - simple-deployment-base.yaml++
+_app: details
+_version: v1

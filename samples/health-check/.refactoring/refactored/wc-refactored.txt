@@ -1,0 +1,3 @@
+  43   72 samples/health-check/.refactored/liveness-command.yaml++
+  44   73 samples/health-check/.refactored/liveness-http-same-port.yaml++
+  87  145 total

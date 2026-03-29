@@ -1,0 +1,7 @@
+$extends:
+  - service-version-base.yaml++
+_version: v1
+---
+$extends:
+  - service-version-base.yaml++
+_version: v2

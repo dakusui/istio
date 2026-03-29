@@ -1,0 +1,13 @@
+$extends:
+  - service-base.yaml++
+_app: ratings
+spec:
+  ipFamilyPolicy: RequireDualStack
+  ipFamilies:
+  - IPv6
+  - IPv4
+---
+$extends:
+  - simple-deployment-base.yaml++
+_app: ratings
+_version: v1
