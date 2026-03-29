@@ -1,33 +1,31 @@
 $extends:
   - service-base.yaml++
 _app: liveness-http
-_port: 8001
+spec:
+  ports:
+    - name: http
+      port: 8001
 ---
+$extends:
+  - deployment-base.yaml++
 _app: liveness-http
-_port: 8001
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: "eval:string:refexpr(\"._app\")"
 spec:
   selector:
     matchLabels:
-      app: "eval:string:refexpr(\"._app\")"
       version: v1
   template:
     metadata:
       labels:
-        app: "eval:string:refexpr(\"._app\")"
         version: v1
     spec:
       containers:
-        - name: "eval:string:refexpr(\"._app\")"
+        - name: liveness-http
           image: registry.istio.io/release/health:example
           ports:
-            - containerPort: "eval:number:refexpr(\"._port\")"
+            - containerPort: 8001
           livenessProbe:
             httpGet:
               path: /foo
-              port: "eval:number:refexpr(\"._port\")"
+              port: 8001
             initialDelaySeconds: 5
             periodSeconds: 5

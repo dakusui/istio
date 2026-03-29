@@ -1,24 +1,19 @@
 $extends:
   - service-base.yaml++
 _app: liveness
-_port: 80
----
-_app: liveness
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: "eval:string:refexpr(\"._app\")"
 spec:
-  selector:
-    matchLabels:
-      app: "eval:string:refexpr(\"._app\")"
+  ports:
+    - port: 80
+      name: http
+---
+$extends:
+  - deployment-base.yaml++
+_app: liveness
+spec:
   template:
-    metadata:
-      labels:
-        app: "eval:string:refexpr(\"._app\")"
     spec:
       containers:
-        - name: "eval:string:refexpr(\"._app\")"
+        - name: liveness
           image: registry.k8s.io/busybox
           args:
             - /bin/sh

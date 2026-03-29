@@ -1,1 +1,0 @@
- 143  256 samples/cicd/.generated/skaffold/skaffold.yaml

@@ -7,8 +7,8 @@
 #
 # Typical workflow:
 #   generate.sh                                 # build into .refactoring/sandbox (default)
-#   diff -r ../.refactoring/sandbox ../.refactoring/generated
-#   generate.sh ../.refactoring/generated       # promote to .refactoring/generated when satisfied
+#   diff -r .refactoring/sandbox .refactoring/generated
+#   generate.sh .refactoring/generated          # promote to .refactoring/generated when satisfied
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
@@ -18,7 +18,10 @@ OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
 export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
+# Adjust these lines to match the sample's subdirectory structure.
 "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${SAMPLE_DIR}/.refactoring/refactored"
+# Add one line per subdirectory, e.g.:
+# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api" "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
 
 # ── strip private _-prefixed keys ─────────────────────────────────────────────
 while IFS= read -r f; do
