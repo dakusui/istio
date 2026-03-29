@@ -1,6 +1,6 @@
 $extends:
   - bookinfo.jq
-  - reviews-http-route-base.yaml++
+  - reviews/http-route-base.yaml++
 spec:
   rules:
     - backendRefs:
