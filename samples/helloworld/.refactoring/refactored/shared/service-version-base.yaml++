@@ -1,11 +1,7 @@
-apiVersion: v1
-kind: Service
+$extends:
+  - service-common-base.yaml++
 metadata:
   name: "eval:string:\"helloworld-\" + refexpr(\"._version\")"
 spec:
-  ports:
-    - port: 5000
-      name: http
   selector:
-    app: helloworld
     version: "eval:string:refexpr(\"._version\")"
