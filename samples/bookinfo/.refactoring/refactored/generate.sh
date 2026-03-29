@@ -15,8 +15,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
-SHARED="${SAMPLE_DIR}/.refactoring/refactored/shared"
-export JF_PATH="${SHARED}:${REPO_ROOT}/samples/shared"
+export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
 
 mkdir -p "${OUT_DIR}/platform/kube" "${OUT_DIR}/networking" "${OUT_DIR}/gateway-api" "${OUT_DIR}/policy"
 

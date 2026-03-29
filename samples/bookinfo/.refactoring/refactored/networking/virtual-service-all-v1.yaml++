@@ -1,15 +1,15 @@
 $extends:
-  - virtual-service/v1-base.yaml++
+  - virtual-service-v1-base.yaml++
 _app: productpage
 ---
 $extends:
-  - virtual-service/v1-base.yaml++
+  - virtual-service-v1-base.yaml++
 _app: reviews
 ---
 $extends:
-  - virtual-service/v1-base.yaml++
+  - virtual-service-v1-base.yaml++
 _app: ratings
 ---
 $extends:
-  - virtual-service/v1-base.yaml++
+  - virtual-service-v1-base.yaml++
 _app: details
