@@ -5,7 +5,7 @@ metadata:
 ---
 $extends:
   - bookinfo.jq
-  - deployment-base.yaml++
+  - base-deployment.yaml++
 _app: ratings
 _version: v2
 spec:

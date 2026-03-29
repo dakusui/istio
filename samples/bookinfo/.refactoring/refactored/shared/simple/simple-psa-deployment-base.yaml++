@@ -1,5 +1,5 @@
 $extends:
-  - deployment-base.yaml++
+  - base-deployment.yaml++
 spec:
   template:
     spec:

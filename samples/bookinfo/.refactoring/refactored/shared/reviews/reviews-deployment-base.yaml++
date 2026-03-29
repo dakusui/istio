@@ -1,5 +1,7 @@
 $extends:
-  - deployment-base.yaml++
+  - base-deployment.yaml++
+_app: ratings
+_version: UNKNOWN
 spec:
   template:
     spec:

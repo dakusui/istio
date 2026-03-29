@@ -1,6 +1,6 @@
 $extends:
   - bookinfo.jq
-  - service-base.yaml++
+  - base-service.yaml++
 _app: details
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -10,19 +10,19 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - account-base.yaml++
+  - base-service-account.yaml++
 _app: details
 ---
 $extends:
   - bookinfo.jq
   - simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: details
 _version: v1
 ---
 $extends:
   - bookinfo.jq
-  - service-base.yaml++
+  - base-service.yaml++
 _app: ratings
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -32,19 +32,19 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - account-base.yaml++
+  - base-service-account.yaml++
 _app: ratings
 ---
 $extends:
   - bookinfo.jq
   - simple-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: ratings
 _version: v1
 ---
 $extends:
   - bookinfo.jq
-  - service-base.yaml++
+  - base-service.yaml++
 _app: reviews
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -54,33 +54,33 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - account-base.yaml++
+  - base-service-account.yaml++
 _app: reviews
 ---
 $extends:
   - bookinfo.jq
   - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: reviews
 _version: v1
 ---
 $extends:
   - bookinfo.jq
   - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: reviews
 _version: v2
 ---
 $extends:
   - bookinfo.jq
   - reviews-deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: reviews
 _version: v3
 ---
 $extends:
   - bookinfo.jq
-  - service-base.yaml++
+  - base-service.yaml++
 _app: productpage
 spec:
   ipFamilyPolicy: RequireDualStack
@@ -90,13 +90,13 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - account-base.yaml++
+  - base-service-account.yaml++
 _app: productpage
 ---
 $extends:
   - bookinfo.jq
-  - deployment-base.yaml++
-  - bookinfo-svcaccount-base.yaml++
+  - base-deployment.yaml++
+  - bookinfo-service-account-base.yaml++
 _app: productpage
 _version: v1
 spec:

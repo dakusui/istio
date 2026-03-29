@@ -1,5 +1,5 @@
 $extends:
-  - destination-rule-base.yaml++
+  - base-destination-rule.yaml++
   - subset.jq
 _app: productpage
 spec:
@@ -7,7 +7,7 @@ spec:
   - "eval:object:subset::version_of(\"v1\")"
 ---
 $extends:
-  - destination-rule-base.yaml++
+  - base-destination-rule.yaml++
   - subset.jq
 _app: reviews
 spec:
@@ -17,7 +17,7 @@ spec:
   - "eval:object:subset::version_of(\"v3\")"
 ---
 $extends:
-  - destination-rule-base.yaml++
+  - base-destination-rule.yaml++
   - subset.jq
 _app: ratings
 spec:
@@ -28,7 +28,7 @@ spec:
   - "eval:object:subset::version_of(\"v2-mysql-vm\")"
 ---
 $extends:
-  - destination-rule-base.yaml++
+  - base-destination-rule.yaml++
   - subset.jq
 _app: details
 spec:
