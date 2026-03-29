@@ -1,3 +1,5 @@
+$extends:
+  - funcs.jq
 _svc: reviews
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -5,7 +7,4 @@ metadata:
   name: reviews
 spec:
   parentRefs:
-    - group: ""
-      kind: Service
-      name: reviews
-      port: 9080
+    - "eval:object:funcs::parentRef(reftag(\"_svc\"); 9080)"

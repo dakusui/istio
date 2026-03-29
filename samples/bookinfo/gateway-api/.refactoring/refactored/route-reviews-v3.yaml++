@@ -1,6 +1,5 @@
 $extends:
   - httproute-reviews-base.yaml++
-  - funcs.jq
 spec:
   rules:
     - backendRefs:
