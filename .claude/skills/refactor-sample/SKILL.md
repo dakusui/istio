@@ -150,6 +150,8 @@ Decide what to extract:
 - **Repeated structure across documents in the same sample** → shared base in `.refactoring/refactored/shared/`
 - **Parametric variants** (same structure, different values) → base file + per-variant extends
 - **Derived values** (e.g., name built from app + version) → `eval:string:refexpr(...)` within the file
+- **Orthogonal cross-cutting concern** (e.g., a naming convention repeated across documents that already have different structural bases) → separate shared base, added to `$extends` alongside the existing base (multi-base inheritance)
+- **Parameter that determines multiple sibling fields** (e.g., a version string that appears as both `name` and `labels.version`) → custom jq function in `shared/*.jq`, called via `eval:object:Namespace::function(arg)`
 
 A useful heuristic: if removing a repetition saves fewer than ~5 lines total, it's probably not worth the abstraction.
 
@@ -301,6 +303,45 @@ profiles:
 Both items now have identical non-`_` structure — making them candidates for a shared `$extends` base where only `_chart` and `_ns` are overridden. The `$cur` (current path as array) and `$curexpr` (current path as string, e.g. `.profiles[0]`) built-ins are available when you need to construct sibling paths manually, but `reftag` is usually the simpler choice for this pattern.
 
 See the [jq++ builtins reference](https://dakusui.github.io/jqplusplus/reference/builtins.html) for full documentation on `$cur`, `$curexpr`, `reftag`, `ref`, `refexpr`, and `parent`.
+
+**Multi-base (node-level) inheritance:**
+A single document can extend multiple bases when two orthogonal concerns each deserve their own file. List both in `$extends`; the child wins over all parents, and the first-listed parent wins over later ones. This works cleanly when the bases cover non-overlapping keys.
+
+```yaml
+# structural base         orthogonal concern (serviceAccountName pattern)
+$extends:
+  - simple-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: ratings
+_version: v1
+```
+
+Use this when a cross-cutting concern (e.g., a naming convention, a security context, a label set) repeats across documents that already inherit different structural bases. Extract the concern into its own shared base and add it to `$extends` rather than duplicating it in each variant.
+
+**Custom jq function libraries:**
+When a recurring structural pattern can't be expressed as a plain `eval:` reference — typically when a single parameter determines multiple sibling fields — define a custom function in a `.jq` file placed in `shared/` (so it is on `JF_PATH` and accessible by bare filename).
+
+*Defining* — create `shared/functions.jq`:
+```jq
+def versioned_subset(p): {"name": p, "labels": {"version": p}};
+```
+
+*Including* — add the `.jq` file to `$extends` alongside any data bases:
+```yaml
+$extends:
+  - destination-rule-base.yaml++
+  - subsets.jq
+```
+
+*Calling* — use `Filename::function_name(arg)` inside an `eval:` expression, where the namespace is the `.jq` filename stem:
+```yaml
+spec:
+  subsets:
+  - "eval:object:subsets::versioned_subset(\"v1\")"
+  - "eval:object:subsets::versioned_subset(\"v2\")"
+```
+
+The `eval:object:` type causes jq++ to replace the string with the returned object, so each array element becomes a proper mapping. Use this technique when a pattern has a fixed internal structure but a varying parameter — it removes the duplication of the parameter at every use site.
 
 **Important caveat — array merging:** jq++ deep-merges objects but shallow-replaces arrays. A child's `containers: [...]` fully replaces the base's `containers: []`. Design base arrays accordingly (usually empty `[]` as placeholder).
 
