@@ -13,8 +13,7 @@ spec:
     app: mongodb
 ---
 $extends:
-  - bookinfo.jq
-  - base/deployment.yaml++
+  - deployment-base.yaml++
 _app: mongodb
 _version: v1
 spec:

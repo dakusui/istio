@@ -1,19 +1,15 @@
 $extends:
-  - bookinfo.jq
-  - base/service-v1-http-route.yaml++
+  - httproute-svc-v1-base.yaml++
 _svc: reviews
 ---
 $extends:
-  - bookinfo.jq
-  - base/service-v1-http-route.yaml++
+  - httproute-svc-v1-base.yaml++
 _svc: productpage
 ---
 $extends:
-  - bookinfo.jq
-  - base/service-v1-http-route.yaml++
+  - httproute-svc-v1-base.yaml++
 _svc: ratings
 ---
 $extends:
-  - bookinfo.jq
-  - base/service-v1-http-route.yaml++
+  - httproute-svc-v1-base.yaml++
 _svc: details
