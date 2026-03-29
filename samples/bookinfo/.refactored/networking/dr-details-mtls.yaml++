@@ -1,6 +1,0 @@
-$extends:
-  - ../shared/dr-details.yaml++
-spec:
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL

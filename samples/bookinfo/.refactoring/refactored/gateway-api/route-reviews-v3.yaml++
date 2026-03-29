@@ -1,0 +1,7 @@
+$extends:
+  - httproute-reviews-base.yaml++
+spec:
+  rules:
+    - backendRefs:
+        - name: reviews-v3
+          port: 9080

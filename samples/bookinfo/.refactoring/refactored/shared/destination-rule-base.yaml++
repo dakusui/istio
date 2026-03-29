@@ -1,0 +1,7 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+spec:
+  host: "eval:string:refexpr(\"._app\")"
+  subsets: []

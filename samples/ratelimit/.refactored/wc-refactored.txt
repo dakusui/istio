@@ -1,6 +1,0 @@
-  22   42 samples/ratelimit/.refactored/ratelimit-service.yaml++
-  12   20 samples/ratelimit/.refactored/redis-service.yaml++
-  53  107 samples/ratelimit/.refactored/ratelimit-deployment.yaml++
-  82  136 samples/ratelimit/.refactored/local-rate-limit-service.yaml++
-  23   38 samples/ratelimit/.refactored/redis-deployment.yaml++
- 192  343 total

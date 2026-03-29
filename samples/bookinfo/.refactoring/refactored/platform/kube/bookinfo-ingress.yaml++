@@ -1,0 +1,47 @@
+_service: productpage
+_port: 9080
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /productpage
+        pathType: Exact
+        backend:
+          service:
+            name: "eval:string:refexpr(\"._service\")"
+            port:
+              number: "eval:number:refexpr(\"._port\")"
+      - path: /static/
+        pathType: Prefix
+        backend:
+          service:
+            name: "eval:string:refexpr(\"._service\")"
+            port:
+              number: "eval:number:refexpr(\"._port\")"
+      - path: /login
+        pathType: Exact
+        backend:
+          service:
+            name: "eval:string:refexpr(\"._service\")"
+            port:
+              number: "eval:number:refexpr(\"._port\")"
+      - path: /logout
+        pathType: Exact
+        backend:
+          service:
+            name: "eval:string:refexpr(\"._service\")"
+            port:
+              number: "eval:number:refexpr(\"._port\")"
+      - path: /api/v1/products
+        pathType: Prefix
+        backend:
+          service:
+            name: "eval:string:refexpr(\"._service\")"
+            port:
+              number: "eval:number:refexpr(\"._port\")"

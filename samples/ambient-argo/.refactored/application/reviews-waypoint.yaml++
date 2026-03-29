@@ -1,6 +1,0 @@
-$extends:
-- ../shared/waypoint-gateway-base.yaml++
-metadata:
-  labels:
-    istio.io/rev: rapid
-  name: bookinfo-reviews

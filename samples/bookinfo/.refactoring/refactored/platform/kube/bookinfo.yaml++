@@ -1,0 +1,87 @@
+$extends:
+  - service-base.yaml++
+_app: details
+---
+$extends:
+  - service-account-base.yaml++
+_app: details
+---
+$extends:
+  - simple-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: details
+_version: v1
+---
+$extends:
+  - service-base.yaml++
+_app: ratings
+---
+$extends:
+  - service-account-base.yaml++
+_app: ratings
+---
+$extends:
+  - simple-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: ratings
+_version: v1
+---
+$extends:
+  - service-base.yaml++
+_app: reviews
+---
+$extends:
+  - service-account-base.yaml++
+_app: reviews
+---
+$extends:
+  - reviews-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: reviews
+_version: v1
+---
+$extends:
+  - reviews-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: reviews
+_version: v2
+---
+$extends:
+  - reviews-deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: reviews
+_version: v3
+---
+$extends:
+  - service-base.yaml++
+_app: productpage
+---
+$extends:
+  - service-account-base.yaml++
+_app: productpage
+---
+$extends:
+  - deployment-base.yaml++
+  - bookinfo-svcaccount-base.yaml++
+_app: productpage
+_version: v1
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9080"
+        prometheus.io/path: /metrics
+    spec:
+      containers:
+      - name: productpage
+        image: registry.istio.io/release/examples-bookinfo-productpage-v1:1.20.3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}

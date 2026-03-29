@@ -1,6 +1,0 @@
-apiVersion: networking.istio.io/v1
-kind: ServiceEntry
-spec:
-  endpoints:
-  - address: "127.0.0.1"
-  resolution: STATIC

@@ -1,4 +1,0 @@
-$extends:
-  - shared/httpbin-service-base.yaml++
-spec:
-  type: NodePort

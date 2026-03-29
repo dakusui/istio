@@ -1,7 +1,0 @@
-$extends:
-  - shared/service-base.yaml++
-spec:
-  ipFamilyPolicy: RequireDualStack
-  ipFamilies:
-  - IPv6
-  - IPv4

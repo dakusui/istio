@@ -1,1 +1,0 @@
- 50  83 samples/curl/.generated/curl.yaml

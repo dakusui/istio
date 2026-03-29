@@ -1,3 +1,0 @@
-  40   68 samples/extauthz/.generated/ext-authz.yaml
-  90  157 samples/extauthz/.generated/local-ext-authz.yaml
- 130  225 total

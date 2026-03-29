@@ -1,9 +1,0 @@
-$extends:
-  - shared/loki-meta.yaml++
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: loki-runtime
-data:
-  runtime-config.yaml: |
-    {}

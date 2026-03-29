@@ -1,0 +1,13 @@
+$extends:
+  - service-base.yaml++
+spec:
+  ipFamilyPolicy: RequireDualStack
+  ipFamilies:
+    - IPv6
+    - IPv4
+---
+$extends:
+  - deployment-v1.yaml++
+---
+$extends:
+  - deployment-v2.yaml++
