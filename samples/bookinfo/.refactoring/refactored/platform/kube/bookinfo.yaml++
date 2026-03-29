@@ -5,7 +5,7 @@ _app: details
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: details
 ---
 $extends:
@@ -22,7 +22,7 @@ _app: ratings
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: ratings
 ---
 $extends:
@@ -39,7 +39,7 @@ _app: reviews
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: reviews
 ---
 $extends:
@@ -70,7 +70,7 @@ _app: productpage
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: productpage
 ---
 $extends:

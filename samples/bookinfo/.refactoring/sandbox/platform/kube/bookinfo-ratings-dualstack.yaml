@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ratings
+    service: ratings
+  name: ratings
+spec:
+  ipFamilies:
+    - IPv6
+    - IPv4
+  ipFamilyPolicy: RequireDualStack
+  ports:
+    - name: http
+      port: 9080
+  selector:
+    app: ratings
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ratings
+    version: v1
+  name: ratings-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ratings
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: ratings
+        version: v1
+    spec:
+      containers:
+        - image: registry.istio.io/release/examples-bookinfo-ratings-v1:1.20.3
+          imagePullPolicy: IfNotPresent
+          name: ratings
+          ports:
+            - containerPort: 9080

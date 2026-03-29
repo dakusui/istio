@@ -10,7 +10,7 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: details
 ---
 $extends:
@@ -32,7 +32,7 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: ratings
 ---
 $extends:
@@ -54,7 +54,7 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: reviews
 ---
 $extends:
@@ -90,7 +90,7 @@ spec:
 ---
 $extends:
   - bookinfo.jq
-  - service-account-base.yaml++
+  - account-base.yaml++
 _app: productpage
 ---
 $extends:

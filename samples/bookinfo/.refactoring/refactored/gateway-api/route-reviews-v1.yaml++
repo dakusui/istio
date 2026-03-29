@@ -1,5 +1,5 @@
 $extends:
-  - httproute-reviews-base.yaml++
+  - reviews-base.yaml++
 spec:
   rules:
     - backendRefs:
