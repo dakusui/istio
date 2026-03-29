@@ -1,8 +1,10 @@
 $extends:
+  - bookinfo.jq
   - service-base.yaml++
 _app: details
 ---
 $extends:
+  - bookinfo.jq
   - simple-deployment-base.yaml++
 _app: details
 _version: v1

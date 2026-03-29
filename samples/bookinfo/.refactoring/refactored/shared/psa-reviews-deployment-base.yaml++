@@ -5,7 +5,7 @@ spec:
     spec:
       containers:
       - name: reviews
-        image: "eval:string:\"registry.istio.io/release/examples-bookinfo-reviews-\" + refexpr(\"._version\") + \":1.20.3\""
+        image: "eval:string:bookinfo::reviews_image(refexpr(\"._version\"))"
         imagePullPolicy: IfNotPresent
         env:
         - name: LOG_DIR

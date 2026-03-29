@@ -1,4 +1,5 @@
 $extends:
+  - bookinfo.jq
   - reviews-deployment-base.yaml++
 _app: reviews
 _version: v2

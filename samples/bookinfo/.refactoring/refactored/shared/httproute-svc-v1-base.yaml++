@@ -10,5 +10,5 @@ spec:
       port: 9080
   rules:
     - backendRefs:
-        - name: "eval:string:refexpr(\"._svc\") + \"-v1\""
+        - name: "eval:string:bookinfo::svc_v1(refexpr(\"._svc\"))"
           port: 9080

@@ -1,4 +1,5 @@
 $extends:
+  - bookinfo.jq
   - service-base.yaml++
 _app: ratings
 spec:
@@ -8,6 +9,7 @@ spec:
   - IPv4
 ---
 $extends:
+  - bookinfo.jq
   - simple-deployment-base.yaml++
 _app: ratings
 _version: v1
