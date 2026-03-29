@@ -225,7 +225,7 @@ spec:
   - "eval:object:funcs::versioned_subset(\"v2\")"
 ```
 
-**Important:** Custom `.jq` function files execute in standard jq context — jq++ built-ins (`refexpr`, `reftag`, etc.) are NOT available inside `.jq` files. Functions must receive all dynamic values as explicit parameters.
+**Note:** Custom `.jq` module functions can call jq++ built-ins (`refexpr`, `reftag`, etc.) directly — they do not run in a restricted plain-jq context. You can use `refexpr` and `reftag` inside `.jq` functions just as you would in a `.yaml++` file.
 
 **Array merging:** jq++ deep-merges objects but shallow-replaces arrays. A child's `containers: [...]` fully replaces the base's `containers: []`. Design base arrays accordingly (usually empty `[]` as placeholder).
 
