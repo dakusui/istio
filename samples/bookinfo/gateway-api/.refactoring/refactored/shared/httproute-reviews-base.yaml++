@@ -7,4 +7,4 @@ metadata:
   name: reviews
 spec:
   parentRefs:
-    - "eval:object:httproute::parentRef(reftag(\"_svc\"); 9080)"
+    - "eval:object:httproute::parentRef(9080)"

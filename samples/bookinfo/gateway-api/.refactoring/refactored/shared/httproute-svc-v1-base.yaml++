@@ -6,7 +6,7 @@ metadata:
   name: "eval:string:refexpr(\"._svc\")"
 spec:
   parentRefs:
-    - "eval:object:httproute::parentRef(reftag(\"_svc\"); 9080)"
+    - "eval:object:httproute::parentRef(9080)"
   rules:
     - backendRefs:
         - "eval:object:httproute::backendRef(\"v1\"; 9080)"
