@@ -6,8 +6,6 @@ metadata:
     app: "eval:string:refexpr(\"._app\")"
     service: "eval:string:refexpr(\"._app\")"
 spec:
-  ports:
-    - name: http
-      port: "eval:number:refexpr(\"._port\")"
+  ports: []
   selector:
     app: "eval:string:refexpr(\"._app\")"

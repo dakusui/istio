@@ -4,8 +4,8 @@
 
 | | Generated (baseline) | Refactored sources | of which: shared | Change |
 |---|---|---|---|---|
-| Lines | 250 | 167 | 58 | −83 (−33%) |
-| Words | 413 | 284 | 104 | −129 (−31%) |
+| Lines | 250 | 165 | 56 | −85 (−34%) |
+| Words | 413 | 278 | 98 | −135 (−33%) |
 
 Baseline is `.refactoring/generated/` (not the originals), since the originals contain inline comments
 (e.g., `#Always` on `imagePullPolicy` lines) that are stripped during the jq++ → yq round-trip and
@@ -46,24 +46,31 @@ plus `_version: v1` (or `v2`). Both `helloworld.yaml++` and `helloworld-dual-sta
 these shared files, so all four Deployment instances across the two output files are covered by a
 single base definition.
 
-### Service deduplication
+### Service deduplication — two-level inheritance
 
-The helloworld Service (13 lines in generated form) appears verbatim in both `helloworld.yaml` and
-`helloworld-dual-stack.yaml`. Extracting it into `shared/service-base.yaml++` lets the dual-stack
-variant extend it and add only 4 lines (`ipFamilyPolicy` + `ipFamilies`) rather than restating the
-full service.
+Both `service-base` (the plain helloworld Service) and `service-version-base` (the versioned Services
+used in `gateway-api/helloworld-versions.yaml`) share the same `apiVersion: v1`, `kind: Service`,
+`spec.ports`, and `spec.selector.app: helloworld` — seven lines in common.
 
-`helloworld.yaml++` is therefore 8 lines — three `$extends` stubs separated by `---`.
+These are extracted into `shared/service-common-base.yaml++`, which both files extend:
+
+- `service-base.yaml++` adds `metadata.name: helloworld` and `metadata.labels`.
+- `service-version-base.yaml++` adds `metadata.name` (version-derived eval) and `spec.selector.version`.
+
+jq++ deep-merges the `spec.selector` object, so `service-version-base` only needs to supply the
+`version` key — `app: helloworld` is inherited from `service-common-base` automatically.
+
+`helloworld.yaml++` is 8 lines — three `$extends` stubs separated by `---`.
 `helloworld-dual-stack.yaml++` is 13 lines — first document extends `service-base` with the dual-stack
-override; the remaining two documents are identical one-liner stubs.
+override (`ipFamilyPolicy` + `ipFamilies`); the remaining two documents are identical one-liner stubs.
 
 ### gateway-api versioned Services
 
 `gateway-api/helloworld-versions.yaml` contains two Services (v1 and v2) differing only in
-`metadata.name` and `spec.selector.version`. A `shared/service-version-base.yaml++` (11 lines) derives
-both fields from `_version`. `gateway-api/helloworld-versions.yaml++` is 7 lines (two `$extends` +
-`_version` stubs separated by `---`), down from 23 lines in the generated baseline — a 70% reduction
-for that file.
+`metadata.name` and `spec.selector.version`. `shared/service-version-base.yaml++` derives both fields
+from `_version`. `gateway-api/helloworld-versions.yaml++` is 7 lines (two `$extends` + `_version`
+stubs separated by `---`), down from 23 lines in the generated baseline — a 70% reduction for that
+file.
 
 ### Files with no significant repetition
 

@@ -1,0 +1,7 @@
+$extends:
+  - shared/httproute/reviews-base.yaml++
+spec:
+  rules:
+    - backendRefs:
+        - "eval:object:httproute::backendRef(\"v1\"; 9080; 90)"
+        - "eval:object:httproute::backendRef(\"v2\"; 9080; 10)"

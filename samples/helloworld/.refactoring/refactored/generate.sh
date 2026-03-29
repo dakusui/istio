@@ -12,7 +12,7 @@
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-sample/bin"
+SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-yamls/bin"
 SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
 export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"

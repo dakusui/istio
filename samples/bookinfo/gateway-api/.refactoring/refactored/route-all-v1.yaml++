@@ -1,0 +1,15 @@
+$extends:
+  - shared/httproute/svc-v1-base.yaml++
+_svc: reviews
+---
+$extends:
+  - shared/httproute/svc-v1-base.yaml++
+_svc: productpage
+---
+$extends:
+  - shared/httproute/svc-v1-base.yaml++
+_svc: ratings
+---
+$extends:
+  - shared/httproute/svc-v1-base.yaml++
+_svc: details

@@ -7,23 +7,21 @@
 #
 # Typical workflow:
 #   generate.sh                                 # build into .refactoring/sandbox (default)
-#   diff -r ../.refactoring/sandbox ../.refactoring/generated
-#   generate.sh ../.refactoring/generated       # promote to .refactoring/generated when satisfied
+#   diff -r .refactoring/sandbox .refactoring/generated
+#   generate.sh .refactoring/generated          # promote to .refactoring/generated when satisfied
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-yamls/bin"
-SAMPLE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
-OUT_DIR="${1:-${SAMPLE_DIR}/.refactoring/sandbox}"
-export JF_PATH="${SAMPLE_DIR}/.refactoring/refactored/shared:${REPO_ROOT}/samples/shared"
-
-mkdir -p "${OUT_DIR}/platform/kube" "${OUT_DIR}/networking" "${OUT_DIR}/gateway-api" "${OUT_DIR}/policy"
+TARGET_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT_DIR="${1:-${TARGET_DIR}/.refactoring/sandbox}"
+export JF_PATH="${TARGET_DIR}/.refactoring/refactored/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/platform/kube" "${SAMPLE_DIR}/.refactoring/refactored/platform/kube"
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/networking"    "${SAMPLE_DIR}/.refactoring/refactored/networking"
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/gateway-api"   "${SAMPLE_DIR}/.refactoring/refactored/gateway-api"
-"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/policy"        "${SAMPLE_DIR}/.refactoring/refactored/policy"
+# Adjust these lines to match the source subdirectory structure.
+"${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}" "${TARGET_DIR}/.refactoring/refactored"
+# Add one line per subdirectory, e.g.:
+# "${SKILL_BIN}/yjoin" --out-dir "${OUT_DIR}/subdir" "${TARGET_DIR}/.refactoring/refactored/subdir"
 
 # ── strip private _-prefixed keys ─────────────────────────────────────────────
 while IFS= read -r f; do

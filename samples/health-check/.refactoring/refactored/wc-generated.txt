@@ -1,3 +1,0 @@
-  40   65 samples/health-check/.generated/liveness-http-same-port.yaml
-  41   68 samples/health-check/.generated/liveness-command.yaml
-  81  133 total
