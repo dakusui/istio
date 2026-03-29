@@ -137,7 +137,12 @@ Decide what to extract:
 - **Orthogonal cross-cutting concern** → separate shared base added to `$extends` (multi-base inheritance)
 - **Pattern where one parameter determines multiple sibling fields** → custom jq function in `shared/*.jq`
 
-A useful heuristic: if removing a repetition saves fewer than ~5 lines total, it's probably not worth the abstraction.
+Two complementary reasons to extract an abstraction:
+
+- **Size reduction** — duplicate lines that appear in three or more places, or repeated blocks that save ~5+ lines total, are worth pulling into a shared base.
+- **Naming** — even a small extraction can be worthwhile if giving the base or function a meaningful name makes the intent of the file tree clearer. A three-line base named `dual-stack-service-base` communicates more than an inline `ipFamilyPolicy` block.
+
+When neither applies — the repetition is small *and* a name adds no clarity — leave it inline.
 
 ### 3. Create the jq++ source files
 
