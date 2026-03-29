@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-collector
+  labels:
+    app: opentelemetry-collector
+spec:
+  ports:
+    - name: grpc-opencensus
+      port: 55678
+      protocol: TCP
+      targetPort: 55678
+    - name: grpc-otlp
+      port: 4317
+      protocol: TCP
+      targetPort: 4317
+    - name: http-otlp
+      port: 4318
+      protocol: TCP
+      targetPort: 4318
+    - name: grpc-otlp-auth
+      port: 5317
+      protocol: TCP
+      targetPort: 5317
+  selector:
+    app: opentelemetry-collector

@@ -1,0 +1,9 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: prometheus
+requires:
+  - configs: [istiod]
+deploy:
+  kubectl:
+    manifests:
+      - ../../../samples/addons/prometheus.yaml

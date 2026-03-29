@@ -1,0 +1,7 @@
+$extends:
+  - shared/service-entry-https-base.yaml++
+metadata:
+  name: github-https
+spec:
+  hosts:
+  - github.com

@@ -1,0 +1,11 @@
+$extends:
+  - shared/local-service-entry-base.yaml++
+metadata:
+  name: httpbin-ext-authz-grpc
+spec:
+  hosts:
+  - "ext-authz-grpc.local"
+  ports:
+  - name: grpc
+    number: 9000
+    protocol: GRPC

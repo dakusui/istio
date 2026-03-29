@@ -1,0 +1,8 @@
+{"eval_id":0,"eval_name":"helloworld-eval","prompt":"Refactor the helloworld sample using jq++.","assertions":[
+  {"name":"generate_sh_exists_and_executable","description":"generate.sh exists and is executable"},
+  {"name":"generated_output_exists","description":"samples/helloworld/.generated/helloworld.yaml exists"},
+  {"name":"semantic_equivalence","description":"All 6 generated YAML files match originals (sorted JSON diff)"},
+  {"name":"uses_extends_or_local","description":"At least one .yaml++ uses $extends or $local"},
+  {"name":"line_reduction","description":"Refactored sources <= original lines"},
+  {"name":"two_deployments_share_base","description":"Both deployment .yaml++ files extend a common base"}
+]}

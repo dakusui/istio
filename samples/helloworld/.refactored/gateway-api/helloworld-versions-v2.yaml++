@@ -1,0 +1,11 @@
+$extends:
+  - ../shared/service-base.yaml++
+metadata:
+  name: helloworld-v2
+spec:
+  ports:
+    - port: 5000
+      name: http
+  selector:
+    app: helloworld
+    version: v2

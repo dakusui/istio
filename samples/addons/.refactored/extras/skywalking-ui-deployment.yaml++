@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking-ui
+  namespace: istio-system
+  labels:
+    app: skywalking-ui
+spec:
+  selector:
+    matchLabels:
+      app: skywalking-ui
+  template:
+    metadata:
+      labels:
+        app: skywalking-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: skywalking-ui
+          image: docker.io/apache/skywalking-ui:9.1.0
+          env:
+            - name: SW_OAP_ADDRESS
+              value: http://skywalking-oap:12800
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5

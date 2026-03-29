@@ -1,0 +1,11 @@
+$extends:
+  - shared/local-service-entry-base.yaml++
+metadata:
+  name: httpbin-ext-authz-http
+spec:
+  hosts:
+  - "ext-authz-http.local"
+  ports:
+  - name: http
+    number: 8000
+    protocol: HTTP

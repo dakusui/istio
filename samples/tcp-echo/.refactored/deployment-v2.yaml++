@@ -1,0 +1,24 @@
+$extends:
+  - shared/deployment-base.yaml++
+metadata:
+  name: tcp-echo-v2
+  labels:
+    app: tcp-echo
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      version: v2
+  template:
+    metadata:
+      labels:
+        version: v2
+    spec:
+      containers:
+      - name: tcp-echo
+        image: registry.istio.io/release/tcp-echo-server:1.3
+        imagePullPolicy: IfNotPresent
+        args: ["9000,9001,9002", "two"]
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001

@@ -1,0 +1,13 @@
+$extends:
+  - shared/service-base.yaml++
+metadata:
+  name: helloworld
+  labels:
+    app: helloworld
+    service: helloworld
+spec:
+  ports:
+    - port: 5000
+      name: http
+  selector:
+    app: helloworld

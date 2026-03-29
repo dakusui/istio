@@ -1,0 +1,25 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: istiod
+requires:
+  - configs: [istio-base]
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    deploy:
+      helm:
+        releases:
+          - name: istiod
+            chartPath: ../../../manifests/charts/istio-control/istio-discovery
+            namespace: istio-system
+  - name: run
+    activation:
+      - command: run
+    deploy:
+      helm:
+        releases:
+          - name: istiod
+            remoteChart: istiod
+            repo: https://istio-release.storage.googleapis.com/charts
+            namespace: istio-system

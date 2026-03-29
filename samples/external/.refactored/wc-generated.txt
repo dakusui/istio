@@ -1,0 +1,4 @@
+  15   27 samples/external/.generated/aptget.yaml
+  43   78 samples/external/.generated/github.yaml
+  35   59 samples/external/.generated/pypi.yaml
+  93  164 total

@@ -1,0 +1,28 @@
+$extends:
+  - shared/deployment-base.yaml++
+metadata:
+  name: curl
+spec:
+  selector:
+    matchLabels:
+      app: curl
+  template:
+    metadata:
+      labels:
+        app: curl
+    spec:
+      terminationGracePeriodSeconds: 0
+      serviceAccountName: curl
+      containers:
+        - name: curl
+          image: docker.io/curlimages/curl:8.16.0
+          command: ["/bin/sleep", "infinity"]
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /etc/curl/tls
+              name: secret-volume
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: curl-secret
+            optional: true

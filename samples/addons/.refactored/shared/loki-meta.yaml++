@@ -1,0 +1,4 @@
+$extends:
+  - loki-labels.yaml++
+metadata:
+  namespace: istio-system

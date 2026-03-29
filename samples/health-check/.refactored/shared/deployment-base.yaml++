@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  selector:
+    matchLabels:
+      app: "eval:string:refexpr(\".metadata.name\")"
+  template:
+    metadata:
+      labels:
+        app: "eval:string:refexpr(\".metadata.name\")"
+    spec:
+      containers: []

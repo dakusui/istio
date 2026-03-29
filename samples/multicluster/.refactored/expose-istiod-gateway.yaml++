@@ -1,0 +1,20 @@
+$extends:
+  - shared/istiod-gateway-base.yaml++
+spec:
+  servers:
+    - port:
+        name: tls-istiod
+        number: 15012
+        protocol: tls
+      tls:
+        mode: PASSTHROUGH
+      hosts:
+        - "*"
+    - port:
+        name: tls-istiodwebhook
+        number: 15017
+        protocol: tls
+      tls:
+        mode: PASSTHROUGH
+      hosts:
+        - "*"

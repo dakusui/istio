@@ -1,0 +1,7 @@
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+spec:
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS

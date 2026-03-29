@@ -1,0 +1,24 @@
+$extends:
+  - shared/deployment-base.yaml++
+metadata:
+  name: liveness-http
+spec:
+  selector:
+    matchLabels:
+      version: v1
+  template:
+    metadata:
+      labels:
+        version: v1
+    spec:
+      containers:
+      - name: "eval:string:refexpr(\".metadata.name\")"
+        image: registry.istio.io/release/health:example
+        ports:
+        - containerPort: 8001
+        livenessProbe:
+          httpGet:
+            path: /foo
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5

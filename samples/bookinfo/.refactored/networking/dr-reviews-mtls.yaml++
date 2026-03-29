@@ -1,0 +1,6 @@
+$extends:
+  - ../shared/dr-reviews.yaml++
+spec:
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

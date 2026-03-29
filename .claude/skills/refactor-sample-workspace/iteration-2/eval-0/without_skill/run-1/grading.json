@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "generate_sh_exists_and_executable",
+      "passed": true,
+      "evidence": "chmod +x applied manually after agent wrote file"
+    },
+    {
+      "text": "generated_output_exists",
+      "passed": true,
+      "evidence": "samples/helloworld/.generated-baseline/ produced after manual run"
+    },
+    {
+      "text": "semantic_equivalence",
+      "passed": true,
+      "evidence": "6/6 PASS via yq -S diff"
+    },
+    {
+      "text": "uses_extends_or_local",
+      "passed": true,
+      "evidence": "Baseline also used $extends for deployments and services"
+    },
+    {
+      "text": "line_reduction",
+      "passed": false,
+      "evidence": "Baseline also increased lines due to file-split overhead"
+    },
+    {
+      "text": "two_deployments_share_base",
+      "passed": true,
+      "evidence": "Baseline agent also chose shared deployment-base pattern"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

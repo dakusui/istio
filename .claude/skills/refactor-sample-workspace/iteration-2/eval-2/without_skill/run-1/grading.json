@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "generate_sh_exists_and_executable",
+      "passed": false,
+      "evidence": "Agent failed early due to Bash denial; no files created"
+    },
+    {
+      "text": "generated_output_exists",
+      "passed": false,
+      "evidence": "No .generated-baseline/ produced"
+    },
+    {
+      "text": "semantic_equivalence",
+      "passed": false,
+      "evidence": "Could not verify \u2014 no output produced"
+    },
+    {
+      "text": "uses_extends_or_local",
+      "passed": false,
+      "evidence": "No source files created"
+    },
+    {
+      "text": "line_reduction",
+      "passed": false,
+      "evidence": "No refactoring done"
+    },
+    {
+      "text": "shared_base_referenced",
+      "passed": false,
+      "evidence": "No files created"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "total": 6,
+    "pass_rate": 0.0
+  }
+}

@@ -1,0 +1,7 @@
+$extends:
+  - helloworld-service.yaml++
+spec:
+  ipFamilyPolicy: RequireDualStack
+  ipFamilies:
+    - IPv6
+    - IPv4

@@ -1,0 +1,7 @@
+  28   47 samples/sleep/.refactored/sleep-deployment.yaml++
+  13   21 samples/sleep/.refactored/sleep-service.yaml++
+   4    6 samples/sleep/.refactored/sleep-serviceaccount.yaml++
+   2    4 samples/sleep/.refactored/shared/service-account-base.yaml++
+   5    9 samples/sleep/.refactored/shared/service-base.yaml++
+   9   14 samples/sleep/.refactored/shared/deployment-base.yaml++
+  61  101 total

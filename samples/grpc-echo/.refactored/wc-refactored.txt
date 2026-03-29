@@ -1,0 +1,5 @@
+  21   40 samples/grpc-echo/.refactored/grpc-echo-service.yaml++
+  77  139 samples/grpc-echo/.refactored/grpc-echo-deployment-v2.yaml++
+  18   28 samples/grpc-echo/.refactored/shared/deployment-base.yaml++
+  77  139 samples/grpc-echo/.refactored/grpc-echo-deployment-v1.yaml++
+ 193  346 total

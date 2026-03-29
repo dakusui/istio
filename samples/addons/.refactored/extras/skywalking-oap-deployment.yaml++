@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking-oap
+  namespace: istio-system
+  labels:
+    app: skywalking-oap
+spec:
+  selector:
+    matchLabels:
+      app: skywalking-oap
+  template:
+    metadata:
+      labels:
+        app: skywalking-oap
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: skywalking-oap
+          image: docker.io/apache/skywalking-oap-server:9.7.0
+          env:
+            - name: SW_HEALTH_CHECKER
+              value: default
+          readinessProbe:
+            exec:
+              command:
+              - /skywalking/bin/swctl
+              - health
+            initialDelaySeconds: 30
+            periodSeconds: 5

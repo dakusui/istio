@@ -1,0 +1,90 @@
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: httpbin-ext-authz-http
+spec:
+  endpoints:
+    - address: 127.0.0.1
+  hosts:
+    - ext-authz-http.local
+  ports:
+    - name: http
+      number: 8000
+      protocol: HTTP
+  resolution: STATIC
+---
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: httpbin-ext-authz-grpc
+spec:
+  endpoints:
+    - address: 127.0.0.1
+  hosts:
+    - ext-authz-grpc.local
+  ports:
+    - name: grpc
+      number: 9000
+      protocol: GRPC
+  resolution: STATIC
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpbin
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: httpbin
+        version: v1
+    spec:
+      containers:
+        - command:
+            - gunicorn
+            - -b
+            - 0.0.0.0:8080
+            - httpbin:app
+            - -k
+            - gevent
+          env:
+            - name: WORKON_HOME
+              value: /tmp
+          image: docker.io/mccutchen/go-httpbin:v2.15.0
+          imagePullPolicy: IfNotPresent
+          name: httpbin
+          ports:
+            - containerPort: 8080
+        - image: registry.istio.io/testing/ext-authz:latest
+          imagePullPolicy: Always
+          name: ext-authz
+          ports:
+            - containerPort: 8000
+            - containerPort: 9000
+      serviceAccountName: httpbin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: httpbin
+    service: httpbin
+  name: httpbin
+spec:
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8080
+  selector:
+    app: httpbin
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: httpbin
+---

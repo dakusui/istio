@@ -1,0 +1,4 @@
+  20   35 samples/custom-bootstrap/.refactored/custom-bootstrap.yaml++
+  29   45 samples/custom-bootstrap/.refactored/example-app.yaml++
+   9   14 samples/custom-bootstrap/.refactored/shared/deployment-base.yaml++
+  58   94 total

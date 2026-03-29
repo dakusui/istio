@@ -1,0 +1,15 @@
+$extends: [shared/config-base.yaml++]
+metadata:
+  name: kiali
+requires:
+  - configs: [prometheus]
+deploy:
+  helm:
+    releases:
+      - name: kiali-server
+        remoteChart: kiali-server
+        repo: https://kiali.org/helm-charts
+        namespace: istio-system
+        version: v1.44.0
+        valuesFiles:
+          - ../../../manifests/addons/values-kiali.yaml
