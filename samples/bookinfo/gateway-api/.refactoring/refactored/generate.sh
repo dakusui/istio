@@ -15,7 +15,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-yamls/bin"
 TARGET_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT_DIR="${1:-${TARGET_DIR}/.refactoring/sandbox}"
-export JF_PATH="${TARGET_DIR}/.refactoring/refactored/shared:${TARGET_DIR}/.refactoring/refactored/shared/httproute"
+export JF_PATH="${TARGET_DIR}/.refactoring/refactored/shared"
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 # Adjust these lines to match the source subdirectory structure.
