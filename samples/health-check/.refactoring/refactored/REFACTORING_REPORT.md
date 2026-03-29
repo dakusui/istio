@@ -4,48 +4,62 @@
 
 | | Generated (baseline) | Refactored sources | of which: shared | Change |
 |---|---|---|---|---|
-| Lines | 81 | 87 | 0 | +6 (+7%) |
-| Words | 133 | 145 | 0 | +12 (+9%) |
+| Lines | 81 | 79 | 13 | −2 (−2%) |
+| Words | 133 | 131 | 22 | −2 (−2%) |
 
 ## Verification
 
-**PASS** — 2/2 files match (`verify.sh` `.generated` vs `.sandbox`).
+**PASS** — 2/2 files match.
 
 ## Findings
 
-### `_app` private holder
+The health-check sample is small — two files, four documents total — with limited structural
+overlap. Both files contain one Service and one Deployment. The Deployment documents are entirely
+different (different probes, different images, different container arguments), so no shared
+Deployment base is viable. The two Services follow an identical structural pattern and are
+extracted into `shared/service-base.yaml++`.
 
-In both source files, the app name appears repeatedly across the Service and Deployment documents:
-- `liveness-command.yaml`: `"liveness"` appears 4 times in the Service and 3 times in the Deployment
-- `liveness-http-same-port.yaml`: `"liveness-http"` appears 4 times in the Service and 3 times in the Deployment
+### Service base
 
-Both were refactored to define `_app` once at the top of each document and reference it via
-`eval:string:refexpr("._app")`. Changing the app name now requires editing one line per document
-rather than hunting down every occurrence.
+Both Services share the same structure: `apiVersion v1`, `kind Service`, `metadata.name` matching
+the app label, `labels.app` and `labels.service` both equal to the app name, a single HTTP port,
+and `selector.app`. They differ only in app name (`liveness` vs `liveness-http`) and port number
+(`80` vs `8001`).
 
-### `_port` private holder
+`shared/service-base.yaml++` captures this pattern with `_app` and `_port` private holders. Each
+service document is now 4 lines:
 
-In `liveness-http-same-port.yaml`, port `8001` appears three times: in `spec.ports[0].port`
-(Service), `containers[0].ports[0].containerPort` (Deployment), and
-`livenessProbe.httpGet.port` (Deployment). A `_port: 8001` holder is defined in each document,
-making the "same port" constraint explicit and in one place.
+```yaml
+$extends:
+  - service-base.yaml++
+_app: liveness
+_port: 80
+```
 
-### No shared bases
+This replaces the 14-line and 15-line inline service documents (which repeated `eval:` expressions
+for every occurrence of the app name) with a single 13-line base and two 4-line extend stubs.
 
-The two Services are structurally similar (same fields, different name and port), but a shared
-`service-base.yaml++` would save only ~2 lines — below the ~5-line abstraction threshold. The
-two Deployments use different probe types (exec vs HTTP) and different container configurations,
-so no structural sharing was applicable.
+### `_app` and `_port` private holders in Deployment documents
 
-### Line count trade-off
+The Deployment documents retain standalone inline form — no `$extends` — because their container
+definitions are completely different and share no extractable structure. Each document defines
+`_app` (and `_port` where a port appears) at the document top, then references it via
+`eval:string:refexpr("._app")` and `eval:number:refexpr("._port")` throughout, eliminating the
+repeated literal app name from `metadata.name`, `spec.selector.matchLabels.app`,
+`spec.template.metadata.labels.app`, and `containers[0].name`.
 
-The refactored sources are slightly larger (+6 lines, +9% words) than the generated baseline
-because `eval:string:refexpr("._app")` (37 characters) is considerably longer than the literal
-values it replaces (`"liveness"`, `"liveness-http"`). The primary benefit of this refactoring is
-not line reduction but single-point-of-change: renaming the app or changing the port requires
-editing one line per document instead of making multiple scattered changes.
+### Limits of structural sharing
+
+- `liveness-command` Deployment has `spec.selector.matchLabels: {app: liveness}` only; `liveness-http`
+  adds `version: v1` in both selector and template labels. This asymmetry prevents a shared
+  Deployment base even if the container sections were abstractable.
+- The two probes are entirely different structures (exec command vs HTTP GET), so no probe base is
+  applicable.
 
 ### Limitations
 
-- The 14-line Apache license header in `liveness-command.yaml` is stripped by the jq++ → yq
-  round-trip. The generated output is semantically equivalent but loses the license comment.
+- YAML comments from the originals (Apache license header, section banners) are stripped during the
+  jq++ → yq round-trip.
+- The sample is small enough that absolute line savings are modest; the primary value is eliminating
+  the repeated literal app name within each document and making the two Services obviously
+  structurally identical.
