@@ -1,3 +1,5 @@
+$extends:
+  - funcs.jq
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -10,5 +12,4 @@ spec:
       port: 9080
   rules:
     - backendRefs:
-        - name: "eval:string:refexpr(\"._svc\") + \"-v1\""
-          port: 9080
+        - "eval:object:funcs::backendRef(\"v1\"; 9080)"

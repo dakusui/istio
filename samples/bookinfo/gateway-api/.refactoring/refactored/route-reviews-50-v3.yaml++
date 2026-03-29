@@ -1,11 +1,8 @@
 $extends:
   - httproute-reviews-base.yaml++
+  - funcs.jq
 spec:
   rules:
     - backendRefs:
-        - name: reviews-v1
-          port: 9080
-          weight: 50
-        - name: reviews-v3
-          port: 9080
-          weight: 50
+        - "eval:object:funcs::backendRef(\"v1\"; 9080; 50)"
+        - "eval:object:funcs::backendRef(\"v3\"; 9080; 50)"
