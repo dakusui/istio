@@ -85,6 +85,8 @@ Run: `jq++ file.yaml++` → plain JSON on stdout. Pipe to `yq -y '.'` for YAML o
 
 **Path resolution:** jq++ resolves `$extends` paths relative to the source file's directory, then checks `JF_PATH`. Because `generate.sh` puts the `shared/` directory on `JF_PATH`, shared base files can be referenced by bare filename from any subdirectory — no relative path prefix needed.
 
+**Subdirectory organization:** shared bases can be grouped into subdirectories under `shared/` (e.g. `shared/httproute/reviews-base.yaml++`). Reference them from leaf files using a path relative to the leaf file's own directory — for a leaf in `refactored/`, that is `shared/httproute/reviews-base.yaml++`. There is no need to add the subdirectory to `JF_PATH`.
+
 **Note on `yq` flavors:** The `yq` on this system is the `kislyuk/yq` wrapper. Its YAML output flag is `-y '.'`, not `-P`. Always use `yq -y '.'`.
 
 ## Directory Layout
@@ -203,6 +205,8 @@ profiles:
 
 `reftag(name)` searches upward through ancestor objects for the nearest matching key.
 
+**`reftag` limitation with eval expressions:** when used inside a `.jq` module function, `reftag` returns the **raw** value — if that value is itself an `eval:string:...` expression, it is returned as a literal string rather than being resolved. This causes failures when the result is used in further jq expressions. Workaround: ensure the key targeted by `reftag` holds a plain string value (e.g. a dedicated `_name: reviews` holder rather than `metadata.name` when that field is itself an eval expression). See [dakusui/jqplusplus#51](https://github.com/dakusui/jqplusplus/issues/51).
+
 **Multi-base inheritance:**
 
 ```yaml
@@ -213,24 +217,28 @@ _app: myapp
 _version: v1
 ```
 
-**Custom jq function libraries** for patterns where one parameter determines multiple sibling fields:
+**Custom jq function libraries** for patterns where one parameter determines multiple sibling fields.
+
+Name `.jq` files after the domain they model (e.g. `httproute.jq`, `destination-rule.jq`) — the filename becomes the module prefix in call sites, so `httproute::backendRef(...)` reads naturally.
 
 ```jq
-# shared/funcs.jq
-def versioned_subset(p): {"name": p, "labels": {"version": p}};
+# shared/httproute.jq
+def backendRef(version; port): {"name": reftag("_svc") + "-" + version, "port": port};
 ```
 
 ```yaml
 $extends:
   - destination-rule-base.yaml++
-  - funcs.jq
+  - httproute.jq
 spec:
   subsets:
-  - "eval:object:funcs::versioned_subset(\"v1\")"
-  - "eval:object:funcs::versioned_subset(\"v2\")"
+  - "eval:object:httproute::backendRef(\"v1\"; 9080)"
+  - "eval:object:httproute::backendRef(\"v2\"; 9080)"
 ```
 
 **Note:** Custom `.jq` module functions can call jq++ built-ins (`refexpr`, `reftag`, etc.) directly — they do not run in a restricted plain-jq context. You can use `refexpr` and `reftag` inside `.jq` functions just as you would in a `.yaml++` file.
+
+**Declare `.jq` modules at the base level, not in leaf files.** If a shared base already extends a `.jq` module, leaf files that extend that base must NOT also list the same `.jq` module — jq++ detects this as circular inheritance and fails. Add the `.jq` module to the `$extends` of the deepest base that introduces the dependency; leaf files inherit it transitively.
 
 **Array merging:** jq++ deep-merges objects but shallow-replaces arrays. A child's `containers: [...]` fully replaces the base's `containers: []`. Design base arrays accordingly (usually empty `[]` as placeholder).
 
