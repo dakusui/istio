@@ -1,5 +1,6 @@
 $extends:
   - shared/virtual-service-base.yaml++
+  - spec.jq
 _svc: details
 spec:
   http:
@@ -9,13 +10,9 @@ spec:
         percentage:
           value: 100
     route:
-    - destination:
-        host: details
-        subset: v1
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
   - route:
-    - destination:
-        host: details
-        subset: v1
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
 ---
 $extends:
   - shared/destination-rule-base.yaml++

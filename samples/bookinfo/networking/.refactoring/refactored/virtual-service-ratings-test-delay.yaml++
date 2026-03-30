@@ -1,5 +1,6 @@
 $extends:
   - shared/virtual-service-base.yaml++
+  - spec.jq
 _svc: ratings
 spec:
   http:
@@ -13,10 +14,6 @@ spec:
           value: 100.0
         fixedDelay: 7s
     route:
-    - destination:
-        host: ratings
-        subset: v1
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
   - route:
-    - destination:
-        host: ratings
-        subset: v1
+    - destination: "eval:object:spec::routing_destination(\"v1\")"

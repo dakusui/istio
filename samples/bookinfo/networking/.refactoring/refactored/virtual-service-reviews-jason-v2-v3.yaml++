@@ -1,5 +1,6 @@
 $extends:
   - shared/virtual-service-base.yaml++
+  - spec.jq
 _svc: reviews
 spec:
   http:
@@ -8,10 +9,6 @@ spec:
         end-user:
           exact: jason
     route:
-    - destination:
-        host: reviews
-        subset: v2
+    - destination: "eval:object:spec::routing_destination(\"v2\")"
   - route:
-    - destination:
-        host: reviews
-        subset: v3
+    - destination: "eval:object:spec::routing_destination(\"v3\")"
