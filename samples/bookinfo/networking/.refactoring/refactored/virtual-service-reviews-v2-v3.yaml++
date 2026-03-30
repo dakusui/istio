@@ -5,5 +5,7 @@ _svc: reviews
 spec:
   http:
   - route:
-    - "eval:object:spec::weighted_destination_of(\"v2\"; 50)"
-    - "eval:object:spec::weighted_destination_of(\"v3\"; 50)"
+    - destination: "eval:object:spec::routing_destination(\"v2\")"
+      weight: 50
+    - destination: "eval:object:spec::routing_destination(\"v3\")"
+      weight: 50
