@@ -1,11 +1,11 @@
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: reviews
 _subset: v3
 ---
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: ratings
 _subset: v2

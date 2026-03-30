@@ -1,5 +1,5 @@
 $extends:
-  - shared/virtual-service-base.yaml++
+  - virtual-service-base.yaml++
   - spec.jq
 _svc: ratings
 spec:

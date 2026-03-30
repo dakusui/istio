@@ -1,5 +1,5 @@
 $extends:
-  - shared/virtual-service-base.yaml++
+  - virtual-service-base.yaml++
   - spec.jq
 _svc: details
 spec:
@@ -15,7 +15,7 @@ spec:
     - destination: "eval:object:spec::routing_destination(\"v1\")"
 ---
 $extends:
-  - shared/destination-rule-base.yaml++
+  - destination-rule-base.yaml++
 _svc: details
 spec:
   subsets:

@@ -1,23 +1,23 @@
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: productpage
 _subset: v1
 ---
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: reviews
 _subset: v1
 ---
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: ratings
 _subset: v1
 ---
 $extends:
-  - shared/traffic-split/all.yaml++
-  - shared/virtual-service-base.yaml++
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
 _svc: details
 _subset: v1

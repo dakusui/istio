@@ -1,12 +1,12 @@
 $extends:
-  - shared/destination-rule-mtls-base.yaml++
+  - destination-rule-mtls-base.yaml++
 _svc: productpage
 spec:
   subsets:
   - "eval:object:spec::subset_of(\"v1\")"
 ---
 $extends:
-  - shared/destination-rule-mtls-base.yaml++
+  - destination-rule-mtls-base.yaml++
 _svc: reviews
 spec:
   subsets:
@@ -15,7 +15,7 @@ spec:
   - "eval:object:spec::subset_of(\"v3\")"
 ---
 $extends:
-  - shared/destination-rule-mtls-base.yaml++
+  - destination-rule-mtls-base.yaml++
 _svc: ratings
 spec:
   subsets:
@@ -25,7 +25,7 @@ spec:
   - "eval:object:spec::subset_of(\"v2-mysql-vm\")"
 ---
 $extends:
-  - shared/destination-rule-mtls-base.yaml++
+  - destination-rule-mtls-base.yaml++
 _svc: details
 spec:
   subsets:

@@ -1,5 +1,5 @@
 $extends:
-  - shared/destination-rule-base.yaml++
+  - destination-rule-base.yaml++
 _svc: reviews
 spec:
   trafficPolicy:

@@ -1,5 +1,5 @@
 $extends:
-  - shared/gateway-base.yaml++
+  - gateway-base.yaml++
 metadata:
   name: cert-manager-gateway
   namespace: istio-system
