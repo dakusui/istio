@@ -1,0 +1,9 @@
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: reviews
+_subset: v3
+---
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: ratings
+_subset: v2-mysql-vm

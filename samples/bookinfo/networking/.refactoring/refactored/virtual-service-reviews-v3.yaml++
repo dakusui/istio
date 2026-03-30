@@ -1,0 +1,4 @@
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: reviews
+_subset: v3

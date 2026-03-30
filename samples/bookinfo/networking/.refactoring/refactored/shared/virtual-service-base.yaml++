@@ -1,0 +1,8 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: "eval:string:refexpr(\"._svc\")"
+spec:
+  hosts:
+  - "eval:string:refexpr(\"._svc\")"
+  http: []

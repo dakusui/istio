@@ -1,0 +1,19 @@
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: productpage
+_subset: v1
+---
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: reviews
+_subset: v1
+---
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: ratings
+_subset: v1
+---
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: details
+_subset: v1

@@ -1,0 +1,8 @@
+$extends:
+  - virtual-service-base.yaml++
+spec:
+  http:
+  - route:
+    - destination:
+        host: "eval:string:refexpr(\"._svc\")"
+        subset: "eval:string:refexpr(\"._subset\")"

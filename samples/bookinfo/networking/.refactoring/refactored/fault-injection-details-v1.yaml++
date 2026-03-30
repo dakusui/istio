@@ -1,0 +1,25 @@
+$extends:
+  - shared/virtual-service-base.yaml++
+_svc: details
+spec:
+  http:
+  - fault:
+      abort:
+        httpStatus: 555
+        percentage:
+          value: 100
+    route:
+    - destination:
+        host: details
+        subset: v1
+  - route:
+    - destination:
+        host: details
+        subset: v1
+---
+$extends:
+  - shared/destination-rule-base.yaml++
+_svc: details
+spec:
+  subsets:
+  - "eval:object:spec::subset_of(\"v1\")"

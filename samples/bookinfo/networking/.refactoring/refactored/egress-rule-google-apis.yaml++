@@ -1,0 +1,44 @@
+$extends:
+  - spec.jq
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: googleapis
+spec:
+  hosts:
+  - www.googleapis.com
+  ports:
+  - "eval:object:spec::http_port(80)"
+  - "eval:object:spec::https_port(443)"
+  resolution: DNS
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: rewrite-port-for-googleapis
+spec:
+  hosts:
+  - www.googleapis.com
+  http:
+  - match:
+    - port: 80
+    route:
+    - destination:
+        host: www.googleapis.com
+        port:
+          number: 443
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: originate-tls-for-googleapis
+spec:
+  host: www.googleapis.com
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    portLevelSettings:
+    - port:
+        number: 443
+      tls:
+        mode: SIMPLE

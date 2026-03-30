@@ -1,0 +1,9 @@
+$extends:
+  - shared/virtual-service-base.yaml++
+  - spec.jq
+_svc: reviews
+spec:
+  http:
+  - route:
+    - "eval:object:spec::weighted_destination_of(\"v2\"; 50)"
+    - "eval:object:spec::weighted_destination_of(\"v3\"; 50)"

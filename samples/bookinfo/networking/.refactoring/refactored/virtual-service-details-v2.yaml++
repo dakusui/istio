@@ -1,0 +1,4 @@
+$extends:
+  - shared/vs-simple-base.yaml++
+_svc: details
+_subset: v2
