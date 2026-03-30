@@ -1,11 +1,9 @@
 $extends:
   - shared/virtual-service-base.yaml++
-  - spec.jq
+  - shared/traffic-split/ab-testing.yaml++
 _svc: reviews
-spec:
-  http:
-  - route:
-    - destination: "eval:object:spec::routing_destination(\"v1\")"
-      weight: 80
-    - destination: "eval:object:spec::routing_destination(\"v2\")"
-      weight: 20
+_traffic_split:
+  - name: v1
+    weight: 80
+  - name: v2
+    weight: 20
