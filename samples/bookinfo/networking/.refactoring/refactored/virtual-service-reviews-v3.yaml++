@@ -1,4 +1,5 @@
 $extends:
-  - shared/vs-simple-base.yaml++
+  - shared/traffic-split/all.yaml++
+  - shared/virtual-service-base.yaml++
 _svc: reviews
 _subset: v3

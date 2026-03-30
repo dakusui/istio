@@ -1,6 +1,6 @@
 $extends:
-  - shared/virtual-service-base.yaml++
   - shared/traffic-split/ab-testing.yaml++
+  - shared/virtual-service-base.yaml++
 _svc: reviews
 _traffic_split:
   - name: v1
