@@ -1,0 +1,9 @@
+$extends:
+  - spec.jq
+spec:
+  http:
+  - route:
+    - destination: "eval:object:spec::routing_destination(refexpr(\"._traffic_split[0].name\"))"
+      weight: "eval:number:refexpr(\"._traffic_split[0].weight\")"
+    - destination: "eval:object:spec::routing_destination(refexpr(\"._traffic_split[1].name\"))"
+      weight: "eval:number:refexpr(\"._traffic_split[1].weight\")"

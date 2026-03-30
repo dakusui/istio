@@ -1,0 +1,22 @@
+$extends:
+  - virtual-service-base.yaml++
+  - spec.jq
+_svc: details
+spec:
+  http:
+  - fault:
+      abort:
+        httpStatus: 555
+        percentage:
+          value: 100
+    route:
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
+  - route:
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
+---
+$extends:
+  - destination-rule-base.yaml++
+_svc: details
+spec:
+  subsets:
+  - "eval:object:spec::subset_of(\"v1\")"

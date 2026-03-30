@@ -1,0 +1,19 @@
+$extends:
+  - virtual-service-base.yaml++
+  - spec.jq
+_svc: ratings
+spec:
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    fault:
+      delay:
+        percentage:
+          value: 100.0
+        fixedDelay: 7s
+    route:
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
+  - route:
+    - destination: "eval:object:spec::routing_destination(\"v1\")"

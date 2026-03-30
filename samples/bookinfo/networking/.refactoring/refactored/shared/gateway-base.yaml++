@@ -1,0 +1,8 @@
+$extends:
+  - spec.jq
+apiVersion: networking.istio.io/v1
+kind: Gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers: []

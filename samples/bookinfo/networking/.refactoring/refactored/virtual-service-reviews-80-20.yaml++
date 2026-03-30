@@ -1,0 +1,9 @@
+$extends:
+  - traffic-split/ab-testing.yaml++
+  - virtual-service-base.yaml++
+_svc: reviews
+_traffic_split:
+  - name: v1
+    weight: 80
+  - name: v2
+    weight: 20

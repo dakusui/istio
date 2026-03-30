@@ -1,0 +1,9 @@
+$extends:
+  - spec.jq
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: "eval:string:refexpr(\"._svc\")"
+spec:
+  host: "eval:string:refexpr(\"._svc\")"
+  subsets: []

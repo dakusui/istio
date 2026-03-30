@@ -1,0 +1,19 @@
+$extends:
+  - subsets/productpage.yaml++
+  - destination-rule-base.yaml++
+_svc: productpage
+---
+$extends:
+  - subsets/reviews.yaml++
+  - destination-rule-base.yaml++
+_svc: reviews
+---
+$extends:
+  - subsets/ratings.yaml++
+  - destination-rule-base.yaml++
+_svc: ratings
+---
+$extends:
+  - subsets/details.yaml++
+  - destination-rule-base.yaml++
+_svc: details

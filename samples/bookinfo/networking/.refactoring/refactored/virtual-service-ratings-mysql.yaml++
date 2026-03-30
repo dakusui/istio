@@ -1,0 +1,11 @@
+$extends:
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
+_svc: reviews
+_subset: v3
+---
+$extends:
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
+_svc: ratings
+_subset: v2-mysql

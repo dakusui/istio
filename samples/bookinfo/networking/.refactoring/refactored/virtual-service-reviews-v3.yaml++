@@ -1,0 +1,5 @@
+$extends:
+  - traffic-split/all.yaml++
+  - virtual-service-base.yaml++
+_svc: reviews
+_subset: v3

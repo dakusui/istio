@@ -1,0 +1,6 @@
+$extends:
+  - spec.jq
+spec:
+  http:
+  - route:
+    - destination: "eval:object:spec::routing_destination(refexpr(\"._subset\"))"

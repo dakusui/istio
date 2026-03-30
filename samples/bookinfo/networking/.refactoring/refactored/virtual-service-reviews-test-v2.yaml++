@@ -1,0 +1,14 @@
+$extends:
+  - virtual-service-base.yaml++
+  - spec.jq
+_svc: reviews
+spec:
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination: "eval:object:spec::routing_destination(\"v2\")"
+  - route:
+    - destination: "eval:object:spec::routing_destination(\"v1\")"
