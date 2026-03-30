@@ -1,11 +1,8 @@
 $extends:
+  - subsets/reviews.yaml++
   - destination-rule-base.yaml++
 _svc: reviews
 spec:
   trafficPolicy:
     loadBalancer:
       simple: RANDOM
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
-  - "eval:object:spec::subset_of(\"v3\")"

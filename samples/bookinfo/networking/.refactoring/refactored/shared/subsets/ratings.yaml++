@@ -1,0 +1,6 @@
+spec:
+  subsets:
+  - "eval:object:spec::subset_of(\"v1\")"
+  - "eval:object:spec::subset_of(\"v2\")"
+  - "eval:object:spec::subset_of(\"v2-mysql\")"
+  - "eval:object:spec::subset_of(\"v2-mysql-vm\")"

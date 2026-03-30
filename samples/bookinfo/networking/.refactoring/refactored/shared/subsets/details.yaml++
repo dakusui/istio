@@ -1,0 +1,4 @@
+spec:
+  subsets:
+  - "eval:object:spec::subset_of(\"v1\")"
+  - "eval:object:spec::subset_of(\"v2\")"

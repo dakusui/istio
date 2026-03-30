@@ -1,33 +1,23 @@
 $extends:
-  - destination-rule-mtls-base.yaml++
+  - subsets/productpage.yaml++
+  - destination-rule-base.yaml++
+  - policy/mtls.yaml++
 _svc: productpage
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
 ---
 $extends:
-  - destination-rule-mtls-base.yaml++
+  - subsets/reviews.yaml++
+  - destination-rule-base.yaml++
+  - policy/mtls.yaml++
 _svc: reviews
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
-  - "eval:object:spec::subset_of(\"v3\")"
 ---
 $extends:
-  - destination-rule-mtls-base.yaml++
+  - subsets/ratings.yaml++
+  - destination-rule-base.yaml++
+  - policy/mtls.yaml++
 _svc: ratings
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
-  - "eval:object:spec::subset_of(\"v2-mysql\")"
-  - "eval:object:spec::subset_of(\"v2-mysql-vm\")"
 ---
 $extends:
-  - destination-rule-mtls-base.yaml++
+  - subsets/details.yaml++
+  - destination-rule-base.yaml++
+  - policy/mtls.yaml++
 _svc: details
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"

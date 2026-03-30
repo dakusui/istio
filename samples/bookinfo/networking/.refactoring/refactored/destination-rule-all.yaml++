@@ -1,33 +1,19 @@
 $extends:
+  - subsets/productpage.yaml++
   - destination-rule-base.yaml++
 _svc: productpage
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
 ---
 $extends:
+  - subsets/reviews.yaml++
   - destination-rule-base.yaml++
 _svc: reviews
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
-  - "eval:object:spec::subset_of(\"v3\")"
 ---
 $extends:
+  - subsets/ratings.yaml++
   - destination-rule-base.yaml++
 _svc: ratings
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
-  - "eval:object:spec::subset_of(\"v2-mysql\")"
-  - "eval:object:spec::subset_of(\"v2-mysql-vm\")"
 ---
 $extends:
+  - subsets/details.yaml++
   - destination-rule-base.yaml++
 _svc: details
-spec:
-  subsets:
-  - "eval:object:spec::subset_of(\"v1\")"
-  - "eval:object:spec::subset_of(\"v2\")"
