@@ -181,7 +181,33 @@ $extends:
   - virtual-service-base.yaml++       # second → provides the rest
 ```
 
-## Experimenting
+## Experimenting with Claude Code
+
+If you have [Claude Code](https://claude.com/claude-code) installed, this
+repository ships with slash commands that let an AI agent do the heavy lifting
+for you. Open Claude Code in this repo's root and try:
+
+| Command | What it does |
+|---|---|
+| `/refactor-sample samples/bookinfo/networking` | Refactors a sample directory from scratch using jq++ |
+| `/refactor-and-report-sample samples/bookinfo/networking` | Refactors and writes a `REFACTORING_REPORT.md` in one go |
+| `/refactoring-report bookinfo/networking` | Writes a report for an already-refactored sample |
+
+For example, to refactor the `helloworld` sample and get a report, just type:
+
+```
+/refactor-and-report-sample samples/helloworld
+```
+
+The agent will analyse the YAML files, design a jq++ structure, write the
+`.yaml++` sources, run `generate.sh` and `verify.sh`, and iterate until all
+files match — no manual jq++ knowledge required to get started.
+
+> **Tip**: you can also just describe what you want in plain English —
+> *"Reduce repetition in `samples/bookinfo/networking` using jq++"* — and
+> Claude Code will invoke the right skill automatically.
+
+## Experimenting manually
 
 To elaborate a single `.yaml++` file and inspect the output:
 
