@@ -1,0 +1,12 @@
+$extends:
+  - destination-rule-base.yaml++
+  - subsets.jq
+_app: reviews
+spec:
+  trafficPolicy:
+    loadBalancer:
+      simple: RANDOM
+  subsets:
+  - "eval:object:subsets::versioned_subset(\"v1\")"
+  - "eval:object:subsets::versioned_subset(\"v2\")"
+  - "eval:object:subsets::versioned_subset(\"v3\")"

@@ -1,0 +1,7 @@
+$extends:
+  - virtual-service-weighted-base.yaml++
+_app: reviews
+_subset1: v1
+_weight1: 50
+_subset2: v3
+_weight2: 50

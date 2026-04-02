@@ -1,0 +1,9 @@
+$extends:
+  - virtual-service-subset-base.yaml++
+_app: reviews
+_subset: v3
+---
+$extends:
+  - virtual-service-subset-base.yaml++
+_app: ratings
+_subset: v2-mysql

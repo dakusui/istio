@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: "eval:string:refexpr(\"._app\")"
+spec:
+  hosts:
+  - "eval:string:refexpr(\"._app\")"
+  http:
+  - route:
+    - destination:
+        host: "eval:string:refexpr(\"._app\")"
+        subset: "eval:string:refexpr(\"._subset1\")"
+      weight: "eval:number:refexpr(\"._weight1\")"
+    - destination:
+        host: "eval:string:refexpr(\"._app\")"
+        subset: "eval:string:refexpr(\"._subset2\")"
+      weight: "eval:number:refexpr(\"._weight2\")"
