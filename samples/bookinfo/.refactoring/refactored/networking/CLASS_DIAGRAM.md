@@ -1,6 +1,7 @@
 # Class Diagram: samples/bookinfo/.refactoring/refactored/networking
 
 > `$extends` relationships are shown as inheritance arrows (`◁──`).
+> jq library usage is shown as dependency arrows (`‥‥▷`).
 > Files containing multiple `---`-separated documents list per-doc parameter
 > bindings inline; all documents within a file share the same base.
 > Files using the `@01.yaml` naming convention bypass jq++ and are marked
@@ -9,6 +10,12 @@
 ```mermaid
 classDiagram
     direction LR
+
+    %% ── jq function library ──────────────────────────────────────────────
+    class subsetsJq["subsets.jq"] {
+        <<jq library>>
+        +versioned_subset(p)
+    }
 
     %% ── DestinationRule bases ────────────────────────────────────────────
     class drBase["destination-rule-base.yaml++"] {
@@ -147,6 +154,11 @@ classDiagram
     drMtlsBase <|-- drAllMtls
     drBase     <|-- drReviews
     drBase     <|-- faultDetails
+
+    subsetsJq ..> drAll        : versioned_subset
+    subsetsJq ..> drAllMtls    : versioned_subset
+    subsetsJq ..> drReviews    : versioned_subset
+    subsetsJq ..> faultDetails : versioned_subset
 
     %% ── $extends: VS bases ───────────────────────────────────────────────
     vsV1Base      <|-- vsAllV1
