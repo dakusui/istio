@@ -1,7 +1,6 @@
 # Class Diagram: samples/bookinfo/networking/.refactoring/refactored
 
 > `$extends` relationships are shown as inheritance arrows (`◁──`).
-> jq function-library usage is shown as dependency arrows (`‥‥▷`).
 > Files containing multiple `---`-separated documents list each doc's bindings
 > inline; all documents within a file share the same base pattern unless noted.
 
@@ -9,16 +8,7 @@
 classDiagram
     direction LR
 
-    %% ── jq function library ──────────────────────────────────────────────
-    %% class specJq["spec.jq"] {
-    %%     <<jq library>>
-    %%     +subset_of(v)
-    %%     +http_port(n)
-    %%     +https_port(n)
-    %%     +routing_destination(sub)
-    %% }
-
-    %% ── bases derived from spec.jq ───────────────────────────────────────
+    %% ── bases ────────────────────────────────────────────────────────────
     class gatewayBase["gateway-base.yaml++"] {
         <<abstract Gateway>>
         +selector : istio=ingressgateway
@@ -144,12 +134,6 @@ classDiagram
         +default : routing_destination(v1 OR v3)
     }
 
-    %% ── spec.jq → derived bases ──────────────────────────────────────────
-    %% specJq <|-- gatewayBase
-    %% specJq <|-- drBase
-    %% specJq <|-- tsAll
-    %% specJq <|-- tsAB
-
     %% ── Gateway hierarchy ────────────────────────────────────────────────
     gatewayBase <|-- bookinfoGW
     gatewayBase <|-- certManagerGW
@@ -171,17 +155,10 @@ classDiagram
     vsBase <|-- vsReviewsWeighted
     tsAB   <|-- vsReviewsWeighted
 
-    %% ── VirtualService: inline http (uses spec.jq functions directly) ────
+    %% ── VirtualService: inline http ──────────────────────────────────────
     vsBase <|-- vsRatingsFault
-    %% specJq ..> vsRatingsFault : routing_destination
-
     vsBase <|-- vsReviewsJason
-    %% specJq ..> vsReviewsJason : routing_destination
-
     vsBase <|-- faultDetails
-    %% specJq ..> faultDetails : routing_destination subset_of
-
-    %% specJq ..> egressApis : http_port https_port
 
     %% ── DestinationRule: no mTLS ─────────────────────────────────────────
     drBase        <|-- drAll
