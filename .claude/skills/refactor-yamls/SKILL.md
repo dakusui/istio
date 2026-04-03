@@ -27,7 +27,17 @@ If any are missing, stop and tell the user.
 
 ## Skill Utilities
 
-Three scripts are provided under `.claude/skills/refactor-yamls/bin/` and should be invoked with their full path (or add the directory to PATH):
+Three scripts are provided under the skill's `bin/` directory and should be invoked with their full path (or add the directory to PATH). Locate the skill at install time with:
+
+```bash
+_SN="refactor-yamls"
+for _d in \
+    "$(git rev-parse --show-toplevel 2>/dev/null)/.claude/skills/${_SN}/bin" \
+    "${HOME}/.claude/skills/${_SN}/bin" \
+    "${HOME}/.codex/skills/${_SN}/bin"; do
+    [ -d "${_d}" ] && { SKILL_BIN="${_d}"; break; }
+done
+```
 
 ### `yq++ FILE`
 
@@ -57,7 +67,6 @@ Batch-assembles all source files in `SRC_DIR` into `.yaml` files in `OUT_DIR`.
 - Files named `{stem}@{id}.yaml` are rendered via `yq -y '.'` and grouped by stem
 
 ```bash
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-yamls/bin"
 "${SKILL_BIN}/yjoin" --out-dir "${TARGET_DIR}/.refactoring/sandbox" "${TARGET_DIR}/.refactoring/refactored"
 ```
 
@@ -87,7 +96,7 @@ Run: `jq++ file.yaml++` → plain JSON on stdout. Pipe to `yq -y '.'` for YAML o
 
 **Subdirectory organization:** shared bases can be grouped into subdirectories under `shared/` (e.g. `shared/httproute/reviews-base.yaml++`). Reference them from leaf files using a path relative to the leaf file's own directory — for a leaf in `refactored/`, that is `shared/httproute/reviews-base.yaml++`. There is no need to add the subdirectory to `JF_PATH`.
 
-**Note on `yq` flavors:** The `yq` on this system is the `kislyuk/yq` wrapper. Its YAML output flag is `-y '.'`, not `-P`. Always use `yq -y '.'`.
+**Note on `yq` flavors:** This skill assumes `kislyuk/yq`. Its YAML output flag is `-y '.'`, not `-P`. Always use `yq -y '.'`.
 
 ## Directory Layout
 
@@ -153,7 +162,6 @@ When neither applies — the repetition is small *and* a name adds no clarity �
 Use `ysplit` to generate a quick initial split for inspection:
 
 ```bash
-SKILL_BIN="$(git rev-parse --show-toplevel)/.claude/skills/refactor-yamls/bin"
 "${SKILL_BIN}/ysplit" --out-dir /tmp/ "{TARGET_DIR}/file.yaml"
 ```
 
@@ -246,14 +254,18 @@ spec:
 
 ### 4. Create generate.sh and verify.sh
 
-Copy the templates and make them executable:
+Locate the skill templates, then copy and make them executable:
 
 ```bash
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-cp "${REPO_ROOT}/.claude/skills/refactor-yamls/templates/generate.sh" \
-   "{TARGET_DIR}/.refactoring/refactored/generate.sh"
-cp "${REPO_ROOT}/.claude/skills/refactor-yamls/templates/verify.sh" \
-   "{TARGET_DIR}/.refactoring/refactored/verify.sh"
+_SN="refactor-yamls"
+for _d in \
+    "$(git rev-parse --show-toplevel 2>/dev/null)/.claude/skills/${_SN}/templates" \
+    "${HOME}/.claude/skills/${_SN}/templates" \
+    "${HOME}/.codex/skills/${_SN}/templates"; do
+    [ -d "${_d}" ] && { SKILL_TEMPLATES="${_d}"; break; }
+done
+cp "${SKILL_TEMPLATES}/generate.sh" "{TARGET_DIR}/.refactoring/refactored/generate.sh"
+cp "${SKILL_TEMPLATES}/verify.sh"   "{TARGET_DIR}/.refactoring/refactored/verify.sh"
 chmod +x "{TARGET_DIR}/.refactoring/refactored/generate.sh" \
          "{TARGET_DIR}/.refactoring/refactored/verify.sh"
 ```
