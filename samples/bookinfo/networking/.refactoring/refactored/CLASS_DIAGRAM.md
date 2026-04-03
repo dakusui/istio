@@ -3,6 +3,7 @@
 > Leaf files and their base dependencies.
 > `$extends` relationships are shown as inheritance arrows (`◁──`).
 > Base node details (attributes, jq functions) are in [shared/CLASS_DIAGRAM.md](shared/CLASS_DIAGRAM.md).
+> `virtual-service-base.yaml++` is repeated inside each VS package for readability; all instances refer to the same shared base.
 
 ```mermaid
 classDiagram
@@ -75,12 +76,14 @@ classDiagram
     }
 
     namespace vs-details {
+        class vsBaseD["virtual-service-base.yaml++"]
         class vsDetailsV2["details-v2.yaml++"] {
             +_subset : v2
         }
     }
 
     namespace vs-ratings {
+        class vsBaseRa["virtual-service-base.yaml++"]
         class vsRatingsSubset["ratings-{db,mysql,mysql-vm}.yaml++"] {
             +doc1 _svc=reviews _subset=v3
             +doc2 _subset=v2/v2-mysql/v2-mysql-vm
@@ -92,6 +95,7 @@ classDiagram
     }
 
     namespace vs-reviews {
+        class vsBaseRv["virtual-service-base.yaml++"]
         class vsReviewsV3["reviews-v3.yaml++"] {
             +_subset : v3
         }
@@ -118,20 +122,22 @@ classDiagram
     vsBase <|-- vsAllV1
     tsAll  <|-- vsAllV1
 
-    vsBase <|-- vsDetailsV2
-    tsAll  <|-- vsDetailsV2
+    vsBaseD <|-- vsDetailsV2
+    tsAll   <|-- vsDetailsV2
 
-    vsBase <|-- vsRatingsSubset
-    tsAll  <|-- vsRatingsSubset
+    vsBaseRa <|-- vsRatingsSubset
+    tsAll    <|-- vsRatingsSubset
 
-    vsBase <|-- vsReviewsV3
-    tsAll  <|-- vsReviewsV3
+    vsBaseRa <|-- vsRatingsFault
 
-    vsBase <|-- vsReviewsWeighted
-    tsAB   <|-- vsReviewsWeighted
+    vsBaseRv <|-- vsReviewsV3
+    tsAll    <|-- vsReviewsV3
 
-    vsBase <|-- vsRatingsFault
-    vsBase <|-- vsReviewsJason
+    vsBaseRv <|-- vsReviewsWeighted
+    tsAB     <|-- vsReviewsWeighted
+
+    vsBaseRv <|-- vsReviewsJason
+
     vsBase <|-- faultDetails
 
     %% ── DestinationRule leaves ───────────────────────────────────────────
