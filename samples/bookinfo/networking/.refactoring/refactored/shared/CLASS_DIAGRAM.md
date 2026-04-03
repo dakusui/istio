@@ -1,6 +1,7 @@
 # Class Diagram: samples/bookinfo/networking/.refactoring/refactored/shared
 
-> This directory contains only reusable bases and mixins — no leaf files.
+> Shared bases and mixins only — no leaf files.
+> Leaf files and their base dependencies are in [../CLASS_DIAGRAM.md](../CLASS_DIAGRAM.md).
 > `$extends` relationships are shown as inheritance arrows (`◁──`).
 
 ```mermaid

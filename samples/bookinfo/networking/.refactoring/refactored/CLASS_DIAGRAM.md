@@ -1,90 +1,38 @@
 # Class Diagram: samples/bookinfo/networking/.refactoring/refactored
 
+> Leaf files and their base dependencies.
 > `$extends` relationships are shown as inheritance arrows (`◁──`).
-> jq function-library usage is shown as dependency arrows (`‥‥▷`).
-> Files containing multiple `---`-separated documents list each doc's bindings
-> inline; all documents within a file share the same base pattern unless noted.
+> Base node details (attributes, jq functions) are in [shared/CLASS_DIAGRAM.md](shared/CLASS_DIAGRAM.md).
 
 ```mermaid
 classDiagram
     direction LR
 
-    %% ── jq function library ──────────────────────────────────────────────
-    class specJq["spec.jq"] {
-        <<jq library>>
-        +subset_of(v)
-        +http_port(n)
-        +https_port(n)
-        +routing_destination(sub)
-    }
+    %% ── shared bases (details in shared/CLASS_DIAGRAM.md) ────────────────
+    class specJq["spec.jq"]
+    class gatewayBase["gateway-base.yaml++"]
+    class drBase["destination-rule-base.yaml++"]
+    class vsBase["virtual-service-base.yaml++"]
+    class tsAll["traffic-split/all.yaml++"]
+    class tsAB["traffic-split/ab-testing.yaml++"]
+    class policyMtls["policy/mtls.yaml++"]
+    class subsProductpage["subsets/productpage.yaml++"]
+    class subsReviews["subsets/reviews.yaml++"]
+    class subsRatings["subsets/ratings.yaml++"]
+    class subsDetails["subsets/details.yaml++"]
 
-    %% ── bases derived from spec.jq ───────────────────────────────────────
-    class gatewayBase["gateway-base.yaml++"] {
-        <<abstract Gateway>>
-        +selector : istio=ingressgateway
-        +servers : []
-    }
-    class drBase["destination-rule-base.yaml++"] {
-        <<abstract DestinationRule>>
-        +_svc
-        +name : _svc
-        +host : _svc
-        +subsets : []
-    }
-    class tsAll["traffic-split/all.yaml++"] {
-        <<http route mixin>>
-        +_subset
-        +http : route → routing_destination(_subset)
-    }
-    class tsAB["traffic-split/ab-testing.yaml++"] {
-        <<http route mixin>>
-        +_traffic_split : name+weight × 2
-        +http : dest[0] w% + dest[1] w%
-    }
-
-    %% ── standalone bases ─────────────────────────────────────────────────
-    class vsBase["virtual-service-base.yaml++"] {
-        <<abstract VirtualService>>
-        +_svc
-        +name : _svc
-        +hosts : _svc
-        +http : []
-    }
-    class policyMtls["policy/mtls.yaml++"] {
-        <<mixin>>
-        +trafficPolicy.tls.mode : ISTIO_MUTUAL
-    }
-    class subsProductpage["subsets/productpage.yaml++"] {
-        <<subsets mixin>>
-        +subsets : v1
-    }
-    class subsReviews["subsets/reviews.yaml++"] {
-        <<subsets mixin>>
-        +subsets : v1 v2 v3
-    }
-    class subsRatings["subsets/ratings.yaml++"] {
-        <<subsets mixin>>
-        +subsets : v1 v2 v2-mysql v2-mysql-vm
-    }
-    class subsDetails["subsets/details.yaml++"] {
-        <<subsets mixin>>
-        +subsets : v1 v2
-    }
-
-    %% ── leaf files ───────────────────────────────────────────────────────
+    %% ── leaf: Gateways ───────────────────────────────────────────────────
     class bookinfoGW["bookinfo-gateway.yaml++"] {
-        +doc1 Gateway bookinfo-gateway
-        +port : http_port(8080)
-        +doc2 VirtualService bookinfo (inline)
-        +destination : productpage port 9080
+        +doc1 Gateway bookinfo-gateway port 8080
+        +doc2 VirtualService bookinfo → productpage:9080
     }
     class certManagerGW["certmanager-gateway.yaml++"] {
         +namespace : istio-system
-        +doc1 Gateway cert-manager-gateway
-        +port : http_port(80)
-        +doc2 VirtualService cert-manager (inline)
-        +destination : cert-manager-resolver port 8089
+        +doc1 Gateway cert-manager-gateway port 80
+        +doc2 VirtualService cert-manager → cert-manager-resolver:8089
     }
+
+    %% ── leaf: DestinationRules ───────────────────────────────────────────
     class drAll["destination-rule-all.yaml++"] {
         +doc1 _svc=productpage
         +doc2 _svc=reviews
@@ -101,17 +49,20 @@ classDiagram
         +_svc : reviews
         +trafficPolicy : RANDOM
     }
+
+    %% ── leaf: egress + fault injection (inline, no $extends) ────────────
     class egressApis["egress-rule-google-apis.yaml++"] {
-        +doc1 ServiceEntry googleapis (http_port https_port)
-        +doc2 VirtualService rewrite-port (inline)
-        +doc3 DestinationRule originate-tls (inline)
+        <<inline>>
+        +doc1 ServiceEntry googleapis
+        +doc2 VirtualService rewrite-port
+        +doc3 DestinationRule originate-tls
     }
     class faultDetails["fault-injection-details-v1.yaml++"] {
-        +doc1 VirtualService details
-        +http : abort 555 + routing_destination(v1)
-        +doc2 DestinationRule details
-        +subsets : subset_of(v1)
+        +doc1 VirtualService details abort 555
+        +doc2 DestinationRule details subsets v1
     }
+
+    %% ── leaf: VirtualServices ────────────────────────────────────────────
     class vsAllV1["virtual-service-all-v1.yaml++"] {
         +_svc : productpage reviews ratings details
         +_subset : v1
@@ -122,13 +73,12 @@ classDiagram
     }
     class vsRatingsSubset["virtual-service-ratings-{db,mysql,mysql-vm}.yaml++"] {
         +doc1 _svc=reviews _subset=v3
-        +doc2 _svc=ratings _subset=v2 OR v2-mysql OR v2-mysql-vm
+        +doc2 _svc=ratings _subset=v2/v2-mysql/v2-mysql-vm
     }
     class vsRatingsFault["virtual-service-ratings-test-{abort,delay}.yaml++"] {
         +_svc : ratings
-        +match : end-user=jason
-        +fault : abort 500 OR delay 7s
-        +default : routing_destination(v1)
+        +match : end-user=jason → abort 500 OR delay 7s
+        +default : v1
     }
     class vsReviewsV3["virtual-service-reviews-v3.yaml++"] {
         +_svc : reviews
@@ -140,8 +90,8 @@ classDiagram
     }
     class vsReviewsJason["virtual-service-reviews-{test-v2,jason-v2-v3}.yaml++"] {
         +_svc : reviews
-        +match : end-user=jason → routing_destination(v2)
-        +default : routing_destination(v1 OR v3)
+        +match : end-user=jason → v2
+        +default : v1 OR v3
     }
 
     %% ── spec.jq → derived bases ──────────────────────────────────────────
@@ -150,11 +100,11 @@ classDiagram
     specJq <|-- tsAll
     specJq <|-- tsAB
 
-    %% ── Gateway hierarchy ────────────────────────────────────────────────
+    %% ── Gateway leaves ───────────────────────────────────────────────────
     gatewayBase <|-- bookinfoGW
     gatewayBase <|-- certManagerGW
 
-    %% ── VirtualService: single-destination (traffic-split/all) ───────────
+    %% ── VirtualService leaves ────────────────────────────────────────────
     vsBase <|-- vsAllV1
     tsAll  <|-- vsAllV1
 
@@ -167,41 +117,29 @@ classDiagram
     vsBase <|-- vsReviewsV3
     tsAll  <|-- vsReviewsV3
 
-    %% ── VirtualService: weighted (traffic-split/ab-testing) ─────────────
     vsBase <|-- vsReviewsWeighted
     tsAB   <|-- vsReviewsWeighted
 
-    %% ── VirtualService: inline http (uses spec.jq functions directly) ────
     vsBase <|-- vsRatingsFault
-    specJq ..> vsRatingsFault : routing_destination
-
     vsBase <|-- vsReviewsJason
-    specJq ..> vsReviewsJason : routing_destination
-
     vsBase <|-- faultDetails
-    specJq ..> faultDetails : routing_destination subset_of
 
-    specJq ..> egressApis : http_port https_port
-
-    %% ── DestinationRule: no mTLS ─────────────────────────────────────────
-    drBase        <|-- drAll
+    %% ── DestinationRule leaves ───────────────────────────────────────────
+    drBase          <|-- drAll
     subsProductpage <|-- drAll
-    subsReviews   <|-- drAll
-    subsRatings   <|-- drAll
-    subsDetails   <|-- drAll
+    subsReviews     <|-- drAll
+    subsRatings     <|-- drAll
+    subsDetails     <|-- drAll
 
-    %% ── DestinationRule: mTLS ────────────────────────────────────────────
-    drBase        <|-- drAllMtls
-    policyMtls    <|-- drAllMtls
+    drBase          <|-- drAllMtls
+    policyMtls      <|-- drAllMtls
     subsProductpage <|-- drAllMtls
-    subsReviews   <|-- drAllMtls
-    subsRatings   <|-- drAllMtls
-    subsDetails   <|-- drAllMtls
+    subsReviews     <|-- drAllMtls
+    subsRatings     <|-- drAllMtls
+    subsDetails     <|-- drAllMtls
 
-    %% ── DestinationRule: reviews with RANDOM LB ──────────────────────────
     drBase      <|-- drReviews
     subsReviews <|-- drReviews
 
-    %% ── DestinationRule: fault-injection pair ────────────────────────────
     drBase <|-- faultDetails
 ```
