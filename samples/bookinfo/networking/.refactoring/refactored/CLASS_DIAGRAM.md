@@ -73,31 +73,35 @@ classDiagram
         +_svc : productpage reviews ratings details
         +_subset : v1
     }
-    class vsDetailsV2["virtual-service-details-v2.yaml++"] {
-        +_svc : details
-        +_subset : v2
+
+    namespace virtual-service/details {
+        class vsDetailsV2["details-v2.yaml++"] {
+            +_subset : v2
+        }
     }
-    class vsRatingsSubset["virtual-service-ratings-{db,mysql,mysql-vm}.yaml++"] {
-        +doc1 _svc=reviews _subset=v3
-        +doc2 _svc=ratings _subset=v2/v2-mysql/v2-mysql-vm
+
+    namespace virtual-service/ratings {
+        class vsRatingsSubset["ratings-{db,mysql,mysql-vm}.yaml++"] {
+            +doc1 _svc=reviews _subset=v3
+            +doc2 _subset=v2/v2-mysql/v2-mysql-vm
+        }
+        class vsRatingsFault["ratings-test-{abort,delay}.yaml++"] {
+            +match : end-user=jason → abort 500 OR delay 7s
+            +default : v1
+        }
     }
-    class vsRatingsFault["virtual-service-ratings-test-{abort,delay}.yaml++"] {
-        +_svc : ratings
-        +match : end-user=jason → abort 500 OR delay 7s
-        +default : v1
-    }
-    class vsReviewsV3["virtual-service-reviews-v3.yaml++"] {
-        +_svc : reviews
-        +_subset : v3
-    }
-    class vsReviewsWeighted["virtual-service-reviews-{50-v3,80-20,90-10,v2-v3}.yaml++"] {
-        +_svc : reviews
-        +_traffic_split : name+weight × 2
-    }
-    class vsReviewsJason["virtual-service-reviews-{test-v2,jason-v2-v3}.yaml++"] {
-        +_svc : reviews
-        +match : end-user=jason → v2
-        +default : v1 OR v3
+
+    namespace virtual-service/reviews {
+        class vsReviewsV3["reviews-v3.yaml++"] {
+            +_subset : v3
+        }
+        class vsReviewsWeighted["reviews-{50-v3,80-20,90-10,v2-v3}.yaml++"] {
+            +_traffic_split : name+weight × 2
+        }
+        class vsReviewsJason["reviews-{test-v2,jason-v2-v3}.yaml++"] {
+            +match : end-user=jason → v2
+            +default : v1 OR v3
+        }
     }
 
     %% ── spec.jq → derived bases ──────────────────────────────────────────
