@@ -74,13 +74,13 @@ classDiagram
         +_subset : v1
     }
 
-    namespace virtual-service/details {
+    namespace vs-details {
         class vsDetailsV2["details-v2.yaml++"] {
             +_subset : v2
         }
     }
 
-    namespace virtual-service/ratings {
+    namespace vs-ratings {
         class vsRatingsSubset["ratings-{db,mysql,mysql-vm}.yaml++"] {
             +doc1 _svc=reviews _subset=v3
             +doc2 _subset=v2/v2-mysql/v2-mysql-vm
@@ -91,7 +91,7 @@ classDiagram
         }
     }
 
-    namespace virtual-service/reviews {
+    namespace vs-reviews {
         class vsReviewsV3["reviews-v3.yaml++"] {
             +_subset : v3
         }
