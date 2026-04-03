@@ -11,6 +11,6 @@ Refactor a sample and produce a `REFACTORING_REPORT.md` in one workflow.
 
 1. Use the `/refactor-sample` skill to perform the full refactoring (steps 1–5: analyze, design, create jq++ sources, generate output, verify).
 
-2. Use the `/refactoring-report` skill to write `REFACTORING_REPORT.md`.
+2. Use the `/refactoring-report-for-sample` skill to write `REFACTORING_REPORT.md`.
 
 ARGUMENTS: {args}

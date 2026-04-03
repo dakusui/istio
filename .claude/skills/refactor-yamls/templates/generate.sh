@@ -12,7 +12,13 @@
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-SKILL_BIN="${REPO_ROOT}/.claude/skills/refactor-yamls/bin"
+_SN="refactor-yamls"
+for _d in \
+    "${REPO_ROOT}/.claude/skills/${_SN}/bin" \
+    "${HOME}/.claude/skills/${_SN}/bin" \
+    "${HOME}/.codex/skills/${_SN}/bin"; do
+  [ -d "${_d}" ] && { SKILL_BIN="${_d}"; break; }
+done
 TARGET_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT_DIR="${1:-${TARGET_DIR}/.refactoring/sandbox}"
 export JF_PATH="${TARGET_DIR}/.refactoring/refactored/shared"

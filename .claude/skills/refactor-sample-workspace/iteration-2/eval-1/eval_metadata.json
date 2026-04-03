@@ -1,8 +1,0 @@
-{"eval_id":1,"eval_name":"sleep-eval","prompt":"Refactor the sleep sample using jq++.","assertions":[
-  {"name":"generate_sh_exists_and_executable","description":"generate.sh exists and is executable"},
-  {"name":"generated_output_exists","description":"samples/sleep/.generated/sleep.yaml exists"},
-  {"name":"semantic_equivalence","description":"Generated sleep.yaml matches original (sorted JSON diff)"},
-  {"name":"uses_extends_or_local","description":"At least one .yaml++ uses $extends or $local"},
-  {"name":"line_reduction","description":"Refactored sources <= original lines"},
-  {"name":"shared_base_referenced","description":"At least one file in .refactored/shared/ is referenced"}
-]}
