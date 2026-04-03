@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: reviews
+        subset: "eval:string:refexpr(\"._match_subset\")"
+  - route:
+    - destination:
+        host: reviews
+        subset: "eval:string:refexpr(\"._default_subset\")"

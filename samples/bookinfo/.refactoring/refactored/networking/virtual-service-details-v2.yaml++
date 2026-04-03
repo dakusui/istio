@@ -1,0 +1,4 @@
+$extends:
+  - virtual-service-subset-base.yaml++
+_app: details
+_subset: v2

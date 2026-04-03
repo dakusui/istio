@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: cert-manager-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - '*'
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: cert-manager
+  namespace: istio-system
+spec:
+  gateways:
+    - cert-manager-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            prefix: /.well-known/acme-challenge/
+      route:
+        - destination:
+            host: cert-manager-resolver
+            port:
+              number: 8089
