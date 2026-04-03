@@ -13,13 +13,19 @@ classDiagram
     class gatewayBase["gateway-base.yaml++"]
     class drBase["destination-rule-base.yaml++"]
     class vsBase["virtual-service-base.yaml++"]
-    class tsAll["traffic-split/all.yaml++"]
-    class tsAB["traffic-split/ab-testing.yaml++"]
     class policyMtls["policy/mtls.yaml++"]
-    class subsProductpage["subsets/productpage.yaml++"]
-    class subsReviews["subsets/reviews.yaml++"]
-    class subsRatings["subsets/ratings.yaml++"]
-    class subsDetails["subsets/details.yaml++"]
+
+    namespace traffic-split {
+        class tsAll["all.yaml++"]
+        class tsAB["ab-testing.yaml++"]
+    }
+
+    namespace subsets {
+        class subsProductpage["productpage.yaml++"]
+        class subsReviews["reviews.yaml++"]
+        class subsRatings["ratings.yaml++"]
+        class subsDetails["details.yaml++"]
+    }
 
     %% ── leaf: Gateways ───────────────────────────────────────────────────
     class bookinfoGW["bookinfo-gateway.yaml++"] {
