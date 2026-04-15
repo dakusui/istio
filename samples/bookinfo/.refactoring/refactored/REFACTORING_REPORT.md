@@ -6,9 +6,14 @@
 |---|---|---|------------------|---|
 | Lines | 2431 | 1392 | 266              | −1039 (−43%) |
 | Words | 4135 | 2377 | 504              | −1758 (−43%) |
+| DuplicationRatio | 25.9% | 10.4% | — | −15.5 pp |
 
 "Refactored sources" is leaf files + shared bases combined. The shared column is
 a subset of that total, not an addition to it.
+
+DuplicationRatio measures the fraction of structural content (key-value pairs)
+that is redundant repetition across files. The "shared" column is not applicable
+because the ratio is computed across the whole directory.
 
 ### Breakdown by subfolder
 
@@ -37,6 +42,16 @@ and are not apportioned here.
 | **shared** | — | **504** | — |
 | **Total** | **4135** | **2377** | **−1758 (−43%)** |
 
+#### DuplicationRatio
+
+| Subfolder | Generated | Refactored | Δ |
+|---|---|---|---|
+| gateway-api | 8.8% | 0.0% | −8.8 pp |
+| networking | 18.6% | 7.8% | −10.8 pp |
+| platform/kube | 31.8% | 17.4% | −14.4 pp |
+| policy | 0.0% | 0.0% | 0.0 pp |
+| **Total** | **25.9%** | **10.4%** | **−15.5 pp** |
+
 ## Verification
 
 PASS — 48/48 files match.
@@ -46,7 +61,12 @@ PASS — 48/48 files match.
 The bookinfo sample spans four subdirectories (`platform/kube`, `networking`,
 `gateway-api`, `policy`) and 48 output files covering six microservices across
 multiple configuration variants. The refactoring reduced source volume by 43%
-through 20 shared base files and one custom jq function library.
+through 20 shared base files and one custom jq function library. Structural
+duplication (measured as the fraction of key-value pairs that are copies of
+something elsewhere in the same file set) dropped from 25.9% to 10.4% (−15.5 pp).
+The residual 10.4% largely reflects the intentional `$extends` + private-holder
+pattern that each leaf file repeats — structurally similar but semantically
+distinct.
 
 ### platform/kube — Deployment and Service boilerplate
 
