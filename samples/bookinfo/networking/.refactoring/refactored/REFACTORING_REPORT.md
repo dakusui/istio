@@ -6,6 +6,11 @@
 |---|---|---|---|---|
 | Lines | 615 | 412 | 62 | −203 (−33%) |
 | Words | 1035 | 697 | 101 | −338 (−33%) |
+| DuplicationRatio | 18.6% | 5.0% | — | −13.6 pp |
+
+DuplicationRatio measures the fraction of structural content (key-value pairs)
+that is redundant repetition across files. The "shared" column is not applicable
+because the ratio is computed across the whole directory.
 
 ## Verification
 
