@@ -6,6 +6,7 @@
 |---|---|---|---|---|
 | Lines | 250 | 165 | 56 | −85 (−34%) |
 | Words | 413 | 278 | 98 | −135 (−33%) |
+| DuplicationRatio | 26.5% | 2.1% | — | −24.4 pp |
 
 Baseline is `.refactoring/generated/` (not the originals), since the originals contain inline comments
 (e.g., `#Always` on `imagePullPolicy` lines) that are stripped during the jq++ → yq round-trip and

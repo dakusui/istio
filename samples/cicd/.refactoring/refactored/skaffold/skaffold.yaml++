@@ -24,7 +24,7 @@ profiles:
             createNamespace: true
 ---
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: istiod
 requires:
@@ -106,7 +106,7 @@ deploy:
           - ../../../manifests/addons/values-kiali.yaml
 ---
 $extends:
-  - shared/config-base.yaml++
+  - config-base.yaml++
 metadata:
   name: bookinfo
 requires:

@@ -6,12 +6,13 @@
 |---|---|---|---|---|
 | Lines | 143 | 145 | 8 | +2 (+1.4%) |
 | Words | 256 | 248 | 16 | −8 (−3.1%) |
+| DuplicationRatio | 0.0% | 0.0% | — | 0.0 pp |
 
 Baseline is `.generated/skaffold/skaffold.yaml`. The original `skaffold/skaffold.yaml` has 146 lines including a header comment block and several inline comments that are stripped by the jq++ → yq round-trip.
 
 ## Verification
 
-**PASS** — 1/1 files match (`verify.sh` `.generated` vs `.sandbox`).
+**PASS** — 1/1 files match.
 
 ## Findings
 
@@ -28,6 +29,8 @@ The cicd sample is a single multi-document YAML file (`skaffold/skaffold.yaml`) 
 Savings are minimal (+2 lines overall) because the primary repetition — the `deploy.helm.releases` block within each profile — cannot be abstracted. jq++ shallow-replaces arrays, so a child document that `$extends` a profile cannot inherit and patch only the chart name; the entire `deploy` section must be restated per variant. The `$extends` inside array items captures only the name/activation header (3 lines per profile), while the deploy body is still fully spelled out.
 
 Cross-document scalar repetition (`namespace: istio-system`, the Helm repo URL) also cannot be shared, since jq++ processes each `---`-separated document independently.
+
+Two documents (`istiod`, `bookinfo`) originally used `shared/config-base.yaml++` (with an explicit `shared/` prefix) rather than the bare `config-base.yaml++`. Because `yq++` mirrors only the immediate source directory into its temp workspace, the prefixed path was unresolvable and those two documents silently dropped from the generated output. Corrected to the bare filename, which `jq++` finds via `JF_PATH`.
 
 ### Primary value
 
